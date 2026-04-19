@@ -377,6 +377,7 @@ body { display: flex; flex-direction: column; }
   <div class="tab active" id="tab-0" onclick="goTab(0)">Home</div>
   <div class="tab" id="tab-1" onclick="goTab(1)">Itinerary</div>
   <div class="tab" id="tab-2" onclick="goTab(2)">Weather</div>
+  <div class="tab" id="tab-3" onclick="goTab(3)">🏂 Challenge</div>
 </div>
 
 <!-- Slides -->
@@ -631,6 +632,21 @@ body { display: flex; flex-direction: column; }
 
     </div>
 
+    <!-- ━━━ GAME ━━━ -->
+    <div class="slide" id="slide-game" style="padding:0; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; overflow:hidden;">
+      <div style="width:100%; text-align:center; padding:14px 16px 6px; position:relative; z-index:2;">
+        <div style="font-size:16px; font-weight:800; letter-spacing:2px; text-transform:uppercase; background:linear-gradient(90deg,var(--cyan),var(--violet)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">Challenge the Master!</div>
+        <div style="font-size:10px; color:var(--muted); letter-spacing:1px; margin-top:3px;">Tap / click to flap · dodge the gates</div>
+        <div style="margin-top:8px; display:flex; align-items:center; justify-content:center; gap:16px;">
+          <span style="font-size:11px; color:var(--muted);">Score</span>
+          <span id="game-score" style="font-size:26px; font-weight:800; font-variant-numeric:tabular-nums; background:linear-gradient(180deg,#fff 20%,var(--cyan) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1;">0</span>
+          <span style="font-size:11px; color:var(--muted);">Best</span>
+          <span id="game-best" style="font-size:26px; font-weight:800; font-variant-numeric:tabular-nums; background:linear-gradient(180deg,#fff 20%,var(--violet) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1;">0</span>
+        </div>
+      </div>
+      <canvas id="game-canvas" style="display:block; width:100%; flex:1;"></canvas>
+    </div>
+
   </div>
 </div>
 
@@ -662,7 +678,7 @@ vp.addEventListener('touchmove', e => {
   const dx = e.touches[0].clientX - startX;
   const base = curTab * -100;
   const pct = base + (dx / vp.offsetWidth * 100);
-  const clamped = Math.max(-200, Math.min(0, pct));
+  const clamped = Math.max(-300, Math.min(0, pct));
   slidesEl.style.transform = `translateX(${clamped}%)`;
 }, { passive: true });
 
@@ -672,7 +688,7 @@ vp.addEventListener('touchend', e => {
   slidesEl.style.transition = 'transform 0.35s cubic-bezier(0.4,0,0.2,1)';
   const dx = e.changedTouches[0].clientX - startX;
   const threshold = vp.offsetWidth * 0.22;
-  if (dx < -threshold && curTab < 2) goTab(curTab + 1);
+  if (dx < -threshold && curTab < 3) goTab(curTab + 1);
   else if (dx > threshold && curTab > 0) goTab(curTab - 1);
   else goTab(curTab);
 });
@@ -717,7 +733,249 @@ function spawnSnowflake() {
 setInterval(spawnSnowflake, 1800);
 for (let i = 0; i < 5; i++) setTimeout(spawnSnowflake, i * 400);
 
-// ── PWA Service Worker (inline) ──
+// ── Flappy Snowboarder Game ──
+(function() {
+  const canvas = document.getElementById('game-canvas');
+  const ctx = canvas.getContext('2d');
+  let gameActive = false;
+  let animId = null;
+
+  function resizeCanvas() {
+    const slide = document.getElementById('slide-game');
+    const headerH = slide.querySelector('div').offsetHeight;
+    canvas.width = slide.offsetWidth;
+    canvas.height = slide.offsetHeight - headerH;
+  }
+
+  // Watch for tab activation
+  const origGoTab = window.goTab || goTab;
+  const patchedGoTab = function(n) {
+    origGoTab(n);
+    if (n === 3) {
+      resizeCanvas();
+      if (!gameActive) startGame();
+    } else {
+      gameActive = false;
+    }
+  };
+  // Override goTab on tabs
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.onclick = () => patchedGoTab(i);
+  });
+
+  const rider = { x: 70, y: 0, velocity: 0, gravity: 0.42, lift: -7.5, size: 28, tiltFrame: 0 };
+  let pipes = [], gFrame = 0, score = 0, bestScore = 0, gOver = false, started = false;
+
+  function flap(e) {
+    if (!gameActive) return;
+    if (e) e.stopPropagation();
+    if (gOver) { resetGame(); return; }
+    if (!started) started = true;
+    rider.velocity = rider.lift;
+  }
+
+  canvas.addEventListener('click', flap);
+  canvas.addEventListener('touchstart', function(e) { e.preventDefault(); flap(e); }, { passive: false });
+
+  function spawnPipe() {
+    const gap = 145;
+    const topH = Math.random() * (canvas.height - gap - 80) + 40;
+    pipes.push({ x: canvas.width, top: topH, bottom: topH + gap, width: 44, passed: false });
+  }
+
+  function resetGame() {
+    rider.y = canvas.height / 2 - 20;
+    rider.velocity = 0;
+    pipes = []; gFrame = 0; score = 0; gOver = false; started = false;
+    document.getElementById('game-score').textContent = '0';
+  }
+
+  function startGame() {
+    gameActive = true;
+    resetGame();
+    if (animId) cancelAnimationFrame(animId);
+    loop();
+  }
+
+  function update() {
+    if (!started) return;
+    rider.velocity += rider.gravity;
+    rider.y += rider.velocity;
+    rider.tiltFrame++;
+
+    if (rider.y > canvas.height - rider.size || rider.y < 0) { endGame(); return; }
+
+    for (let p of pipes) {
+      p.x -= 2.2;
+      const hit = rider.x + rider.size - 6 > p.x &&
+                  rider.x + 6 < p.x + p.width &&
+                  (rider.y + 4 < p.top || rider.y + rider.size - 4 > p.bottom);
+      if (hit) { endGame(); return; }
+      if (!p.passed && p.x + p.width < rider.x) {
+        p.passed = true; score++;
+        document.getElementById('game-score').textContent = score;
+        if (score > bestScore) { bestScore = score; document.getElementById('game-best').textContent = bestScore; }
+      }
+    }
+    pipes = pipes.filter(p => p.x + p.width > 0);
+    if (gFrame % 95 === 0) spawnPipe();
+    gFrame++;
+  }
+
+  function endGame() {
+    gOver = true;
+  }
+
+  function drawBackground() {
+    // Sky gradient
+    const sky = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    sky.addColorStop(0, '#050b18');
+    sky.addColorStop(1, '#0a1628');
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // Grid lines
+    ctx.strokeStyle = 'rgba(0,229,255,0.04)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < canvas.width; x += canvas.width / 3) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+    }
+    for (let y = 0; y < canvas.height; y += canvas.height / 4) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+    }
+    // Ground
+    ctx.fillStyle = 'rgba(0,229,255,0.08)';
+    ctx.fillRect(0, canvas.height - 4, canvas.width, 4);
+  }
+
+  function drawPipes() {
+    for (let p of pipes) {
+      // Top gate
+      const gTop = ctx.createLinearGradient(p.x, 0, p.x + p.width, 0);
+      gTop.addColorStop(0, 'rgba(41,121,255,0.7)');
+      gTop.addColorStop(1, 'rgba(0,229,255,0.5)');
+      ctx.fillStyle = gTop;
+      ctx.beginPath();
+      ctx.roundRect ? ctx.roundRect(p.x, 0, p.width, p.top - 6, [0, 0, 6, 6])
+                    : ctx.rect(p.x, 0, p.width, p.top - 6);
+      ctx.fill();
+      // Top cap glow
+      ctx.fillStyle = 'rgba(0,229,255,0.9)';
+      ctx.fillRect(p.x - 3, p.top - 10, p.width + 6, 8);
+      ctx.shadowColor = 'rgba(0,229,255,0.8)';
+      ctx.shadowBlur = 10;
+      ctx.fillRect(p.x - 3, p.top - 10, p.width + 6, 4);
+      ctx.shadowBlur = 0;
+
+      // Bottom gate
+      const gBot = ctx.createLinearGradient(p.x, 0, p.x + p.width, 0);
+      gBot.addColorStop(0, 'rgba(41,121,255,0.7)');
+      gBot.addColorStop(1, 'rgba(0,229,255,0.5)');
+      ctx.fillStyle = gBot;
+      ctx.beginPath();
+      ctx.roundRect ? ctx.roundRect(p.x, p.bottom + 6, p.width, canvas.height - p.bottom - 6, [6, 6, 0, 0])
+                    : ctx.rect(p.x, p.bottom + 6, p.width, canvas.height - p.bottom - 6);
+      ctx.fill();
+      // Bottom cap glow
+      ctx.fillStyle = 'rgba(0,229,255,0.9)';
+      ctx.fillRect(p.x - 3, p.bottom + 2, p.width + 6, 8);
+      ctx.shadowColor = 'rgba(0,229,255,0.8)';
+      ctx.shadowBlur = 10;
+      ctx.fillRect(p.x - 3, p.bottom + 6, p.width + 6, 4);
+      ctx.shadowBlur = 0;
+    }
+  }
+
+  function drawRider() {
+    ctx.save();
+    const angle = Math.min(Math.max(rider.velocity * 0.075, -0.55), 1.1);
+    ctx.translate(rider.x + rider.size / 2, rider.y + rider.size / 2);
+    ctx.rotate(angle);
+
+    // Board glow
+    ctx.shadowColor = 'rgba(0,229,255,0.6)';
+    ctx.shadowBlur = 8;
+    ctx.fillStyle = '#00e5ff';
+    ctx.fillRect(-18, 9, 36, 5);
+    ctx.shadowBlur = 0;
+
+    // Bindings
+    ctx.fillStyle = '#0077ff';
+    ctx.fillRect(-10, 7, 6, 6);
+    ctx.fillRect(4, 7, 6, 6);
+
+    // Legs
+    const bounce = Math.sin(rider.tiltFrame * 0.2) * 1.5;
+    ctx.fillStyle = '#1a3a5c';
+    ctx.fillRect(-6, 10 + bounce, 5, 9);
+    ctx.fillRect(1, 10 - bounce, 5, 9);
+
+    // Jacket
+    ctx.fillStyle = '#2979ff';
+    ctx.fillRect(-6, -2, 12, 11);
+
+    // Head
+    ctx.fillStyle = '#ffcc99';
+    ctx.beginPath(); ctx.arc(0, -7, 7, 0, Math.PI * 2); ctx.fill();
+
+    // Helmet
+    ctx.fillStyle = '#00e5ff';
+    ctx.shadowColor = 'rgba(0,229,255,0.5)';
+    ctx.shadowBlur = 6;
+    ctx.beginPath(); ctx.arc(0, -10, 6, Math.PI, 0); ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Goggles
+    ctx.fillStyle = '#ff4d00';
+    ctx.fillRect(-5, -9, 10, 4);
+
+    ctx.restore();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBackground();
+    if (!started && !gOver) {
+      // Start screen
+      ctx.fillStyle = 'rgba(0,229,255,0.15)';
+      ctx.beginPath(); ctx.arc(canvas.width/2, canvas.height/2 - 30, 34, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = 'rgba(0,229,255,0.9)';
+      ctx.font = 'bold 28px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('▶', canvas.width/2 + 3, canvas.height/2 - 18);
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      ctx.font = '13px sans-serif';
+      ctx.fillText('Tap to start!', canvas.width/2, canvas.height/2 + 18);
+      ctx.textAlign = 'left';
+    }
+    drawPipes();
+    drawRider();
+    if (gOver) {
+      ctx.fillStyle = 'rgba(5,11,24,0.75)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#ff4d4d';
+      ctx.shadowColor = '#ff4d4d'; ctx.shadowBlur = 12;
+      ctx.font = 'bold 22px sans-serif';
+      ctx.fillText('WIPEOUT! 💥', canvas.width/2, canvas.height/2 - 24);
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = 'rgba(0,229,255,0.9)';
+      ctx.font = '14px sans-serif';
+      ctx.fillText(`Score: ${score}  ·  Best: ${bestScore}`, canvas.width/2, canvas.height/2 + 8);
+      ctx.fillStyle = 'rgba(255,255,255,0.6)';
+      ctx.font = '12px sans-serif';
+      ctx.fillText('Tap to try again', canvas.width/2, canvas.height/2 + 34);
+      ctx.textAlign = 'left';
+    }
+  }
+
+  function loop() {
+    if (!gameActive) return;
+    if (!gOver) update();
+    draw();
+    animId = requestAnimationFrame(loop);
+  }
+})();
+
 if ('serviceWorker' in navigator) {
   const swCode = `
     const CACHE = 'nozawa-2027-v1';
