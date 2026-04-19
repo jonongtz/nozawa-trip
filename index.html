@@ -633,18 +633,65 @@ body { display: flex; flex-direction: column; }
     </div>
 
     <!-- ━━━ GAME ━━━ -->
-    <div class="slide" id="slide-game" style="padding:0; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; overflow:hidden;">
-      <div style="width:100%; text-align:center; padding:14px 16px 6px; position:relative; z-index:2;">
-        <div style="font-size:16px; font-weight:800; letter-spacing:2px; text-transform:uppercase; background:linear-gradient(90deg,var(--cyan),var(--violet)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">Challenge the Master!</div>
-        <div style="font-size:10px; color:var(--muted); letter-spacing:1px; margin-top:3px;">Tap / click to flap · dodge the gates</div>
-        <div style="margin-top:8px; display:flex; align-items:center; justify-content:center; gap:16px;">
-          <span style="font-size:11px; color:var(--muted);">Score</span>
-          <span id="game-score" style="font-size:26px; font-weight:800; font-variant-numeric:tabular-nums; background:linear-gradient(180deg,#fff 20%,var(--cyan) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1;">0</span>
-          <span style="font-size:11px; color:var(--muted);">Best</span>
-          <span id="game-best" style="font-size:26px; font-weight:800; font-variant-numeric:tabular-nums; background:linear-gradient(180deg,#fff 20%,var(--violet) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1;">0</span>
+    <div class="slide" id="slide-game" style="padding:0; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; overflow:hidden; position:relative;">
+
+      <!-- Header bar -->
+      <div id="game-header" style="width:100%; text-align:center; padding:10px 16px 6px; position:relative; z-index:2; flex-shrink:0;">
+        <div style="font-size:15px; font-weight:800; letter-spacing:2px; text-transform:uppercase; background:linear-gradient(90deg,var(--cyan),var(--violet)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">Challenge the Master!</div>
+        <div style="display:flex; align-items:center; justify-content:center; gap:10px; margin-top:6px;">
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="font-size:10px; color:var(--muted);">SCORE</span>
+            <span id="game-score" style="font-size:24px; font-weight:800; font-variant-numeric:tabular-nums; background:linear-gradient(180deg,#fff 20%,var(--cyan) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1; min-width:32px; display:inline-block;">0</span>
+          </div>
+          <div style="width:1px; height:24px; background:var(--border);"></div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="font-size:10px; color:var(--muted);">BEST</span>
+            <span id="game-best" style="font-size:24px; font-weight:800; font-variant-numeric:tabular-nums; background:linear-gradient(180deg,#fff 20%,var(--violet) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1; min-width:32px; display:inline-block;">0</span>
+          </div>
+          <div style="width:1px; height:24px; background:var(--border);"></div>
+          <button onclick="showLeaderboard()" style="background:rgba(0,229,255,0.08); border:1px solid rgba(0,229,255,0.25); color:var(--cyan); font-size:10px; font-weight:700; letter-spacing:1px; padding:5px 10px; border-radius:8px; cursor:pointer;">🏆 BOARD</button>
         </div>
       </div>
+
+      <!-- Canvas -->
       <canvas id="game-canvas" style="display:block; width:100%; flex:1;"></canvas>
+
+      <!-- Name entry overlay (shown first time) -->
+      <div id="overlay-name" style="display:none; position:absolute; inset:0; z-index:20; background:rgba(5,11,24,0.95); backdrop-filter:blur(8px); flex-direction:column; align-items:center; justify-content:center; padding:24px;">
+        <div style="font-size:28px; margin-bottom:8px;">🏂</div>
+        <div style="font-size:17px; font-weight:800; letter-spacing:1px; color:var(--cyan); text-shadow:0 0 14px rgba(0,229,255,0.5); margin-bottom:4px;">Enter Your Rider ID</div>
+        <div style="font-size:11px; color:var(--muted); margin-bottom:20px; letter-spacing:0.5px;">Your name on the global leaderboard</div>
+        <input id="name-input" type="text" maxlength="16" placeholder="e.g. PowderKing99"
+          style="width:100%; max-width:260px; padding:12px 16px; background:rgba(0,229,255,0.06); border:1px solid rgba(0,229,255,0.3); border-radius:10px; color:var(--text); font-size:15px; font-weight:600; text-align:center; outline:none; margin-bottom:12px; letter-spacing:1px;">
+        <button onclick="confirmName()" style="width:100%; max-width:260px; padding:13px; background:linear-gradient(135deg,var(--blue),var(--cyan)); border:none; border-radius:10px; color:#050b18; font-size:13px; font-weight:800; letter-spacing:2px; cursor:pointer; text-transform:uppercase;">Let's Shred →</button>
+        <div style="font-size:10px; color:var(--muted); margin-top:14px; text-align:center; line-height:1.6;">Your best score will be saved globally.<br>Name cannot be changed after this.</div>
+      </div>
+
+      <!-- Leaderboard overlay -->
+      <div id="overlay-leaderboard" style="display:none; position:absolute; inset:0; z-index:20; background:rgba(5,11,24,0.97); backdrop-filter:blur(8px); flex-direction:column; padding:18px 16px 24px; overflow-y:auto;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-shrink:0;">
+          <div>
+            <div style="font-size:16px; font-weight:800; letter-spacing:1.5px; color:var(--cyan);">🏆 Global Leaderboard</div>
+            <div style="font-size:10px; color:var(--muted); margin-top:2px; letter-spacing:1px;">Top shredders worldwide</div>
+          </div>
+          <button onclick="hideLeaderboard()" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:var(--text); font-size:12px; font-weight:700; padding:7px 12px; border-radius:8px; cursor:pointer;">✕ Close</button>
+        </div>
+        <div id="lb-list" style="flex:1;">
+          <div style="text-align:center; color:var(--muted); font-size:13px; padding:30px 0;">Loading scores...</div>
+        </div>
+      </div>
+
+      <!-- Wipeout + submit overlay -->
+      <div id="overlay-wipeout" style="display:none; position:absolute; inset:0; z-index:15; background:rgba(5,11,24,0.88); backdrop-filter:blur(4px); flex-direction:column; align-items:center; justify-content:center; padding:24px;">
+        <div style="font-size:13px; font-weight:800; color:#ff4d4d; letter-spacing:2px; text-shadow:0 0 14px #ff4d4d; margin-bottom:4px;">WIPEOUT! 💥</div>
+        <div id="wo-score-display" style="font-size:44px; font-weight:800; font-variant-numeric:tabular-nums; background:linear-gradient(180deg,#fff,var(--cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1; margin:8px 0 2px;"></div>
+        <div style="font-size:11px; color:var(--muted); margin-bottom:18px; letter-spacing:1px;">gates cleared</div>
+        <div id="wo-newbest" style="display:none; font-size:11px; font-weight:700; color:#fbbf24; letter-spacing:2px; margin-bottom:14px; text-transform:uppercase;">⭐ New Personal Best!</div>
+        <div id="wo-submitting" style="font-size:11px; color:var(--muted); margin-bottom:14px; letter-spacing:1px;"></div>
+        <button onclick="playAgain()" style="width:100%; max-width:260px; padding:13px; background:linear-gradient(135deg,var(--blue),var(--cyan)); border:none; border-radius:10px; color:#050b18; font-size:13px; font-weight:800; letter-spacing:2px; cursor:pointer; text-transform:uppercase; margin-bottom:10px;">Try Again →</button>
+        <button onclick="showLeaderboard()" style="width:100%; max-width:260px; padding:11px; background:rgba(167,139,250,0.1); border:1px solid rgba(167,139,250,0.3); border-radius:10px; color:var(--violet); font-size:12px; font-weight:700; letter-spacing:1.5px; cursor:pointer; text-transform:uppercase;">🏆 View Leaderboard</button>
+      </div>
+
     </div>
 
   </div>
@@ -733,6 +780,119 @@ function spawnSnowflake() {
 setInterval(spawnSnowflake, 1800);
 for (let i = 0; i < 5; i++) setTimeout(spawnSnowflake, i * 400);
 
+// ── Supabase config ──
+const SB_URL  = 'https://nvshxzhoddrgpxcsjyuv.supabase.co';
+const SB_KEY  = 'sb_publishable_0y9oTOryOGt5skHU3vWjBw_gSwO-rSp';
+
+async function sbFetch(path, opts = {}) {
+  return fetch(SB_URL + path, {
+    ...opts,
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': opts.prefer || '',
+      ...(opts.headers || {})
+    }
+  });
+}
+
+async function fetchLeaderboard() {
+  const res = await sbFetch('/rest/v1/leaderboard?select=player_name,score&order=score.desc&limit=20');
+  if (!res.ok) return [];
+  return res.json();
+}
+
+async function upsertScore(playerName, newScore) {
+  // Check existing score
+  const res = await sbFetch(`/rest/v1/leaderboard?player_name=eq.${encodeURIComponent(playerName)}&select=score`);
+  const rows = res.ok ? await res.json() : [];
+  if (rows.length > 0) {
+    if (newScore <= rows[0].score) return false; // not a new best
+    await sbFetch(`/rest/v1/leaderboard?player_name=eq.${encodeURIComponent(playerName)}`, {
+      method: 'PATCH',
+      prefer: 'return=minimal',
+      body: JSON.stringify({ score: newScore })
+    });
+  } else {
+    await sbFetch('/rest/v1/leaderboard', {
+      method: 'POST',
+      prefer: 'return=minimal',
+      body: JSON.stringify({ player_name: playerName, score: newScore })
+    });
+  }
+  return true;
+}
+
+// ── Leaderboard UI ──
+function showLeaderboard() {
+  const ol = document.getElementById('overlay-leaderboard');
+  ol.style.display = 'flex';
+  const list = document.getElementById('lb-list');
+  list.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:30px 0;">Loading...</div>';
+  fetchLeaderboard().then(rows => {
+    if (!rows.length) { list.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:30px 0;">No scores yet — be the first! 🏂</div>'; return; }
+    const playerName = localStorage.getItem('rider_name') || '';
+    list.innerHTML = rows.map((r, i) => {
+      const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `<span style="color:var(--muted);font-size:12px;">${i+1}</span>`;
+      const isMe = r.player_name === playerName;
+      return `<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;margin-bottom:8px;background:${isMe ? 'rgba(0,229,255,0.08)' : 'rgba(255,255,255,0.03)'};border:1px solid ${isMe ? 'rgba(0,229,255,0.25)' : 'rgba(255,255,255,0.05)'};">
+        <div style="width:28px;text-align:center;font-size:16px;">${medal}</div>
+        <div style="flex:1;font-size:13px;font-weight:700;color:${isMe ? 'var(--cyan)' : 'var(--text)'};">${r.player_name}${isMe ? ' <span style="font-size:9px;color:var(--muted);">(you)</span>' : ''}</div>
+        <div style="font-size:16px;font-weight:800;color:${isMe ? 'var(--cyan)' : 'var(--text)'};">${r.score}</div>
+      </div>`;
+    }).join('');
+  }).catch(() => {
+    list.innerHTML = '<div style="text-align:center;color:#ff4d4d;font-size:12px;padding:30px 0;">Could not load scores.<br>Check your connection.</div>';
+  });
+}
+
+function hideLeaderboard() {
+  document.getElementById('overlay-leaderboard').style.display = 'none';
+}
+
+// ── Name entry ──
+function confirmName() {
+  const val = document.getElementById('name-input').value.trim();
+  if (!val) { document.getElementById('name-input').style.borderColor = '#ff4d4d'; return; }
+  localStorage.setItem('rider_name', val);
+  document.getElementById('overlay-name').style.display = 'none';
+  startGame();
+}
+document.getElementById('name-input').addEventListener('keydown', e => { if (e.key === 'Enter') confirmName(); });
+
+function showNameEntry() {
+  const ol = document.getElementById('overlay-name');
+  ol.style.display = 'flex';
+}
+
+// ── Wipeout overlay ──
+function showWipeout(finalScore, isNewBest) {
+  document.getElementById('wo-score-display').textContent = finalScore;
+  document.getElementById('wo-newbest').style.display = isNewBest ? 'block' : 'none';
+  const sub = document.getElementById('wo-submitting');
+  sub.textContent = '';
+  document.getElementById('overlay-wipeout').style.display = 'flex';
+
+  const playerName = localStorage.getItem('rider_name');
+  if (playerName && finalScore > 0) {
+    sub.textContent = 'Submitting score...';
+    upsertScore(playerName, finalScore).then(saved => {
+      sub.textContent = saved ? '✅ Score saved to leaderboard!' : '(Score not a new personal best)';
+    }).catch(() => { sub.textContent = '⚠️ Could not save score.'; });
+  }
+}
+
+function hideWipeout() {
+  document.getElementById('overlay-wipeout').style.display = 'none';
+}
+
+function playAgain() {
+  hideWipeout();
+  resetGame();
+  startGame();
+}
+
 // ── Flappy Snowboarder Game ──
 (function() {
   const canvas = document.getElementById('game-canvas');
@@ -742,34 +902,47 @@ for (let i = 0; i < 5; i++) setTimeout(spawnSnowflake, i * 400);
 
   function resizeCanvas() {
     const slide = document.getElementById('slide-game');
-    const headerH = slide.querySelector('div').offsetHeight;
+    const headerH = document.getElementById('game-header').offsetHeight;
     canvas.width = slide.offsetWidth;
-    canvas.height = slide.offsetHeight - headerH;
+    canvas.height = Math.max(slide.offsetHeight - headerH, 200);
   }
 
-  // Watch for tab activation
-  const origGoTab = window.goTab || goTab;
   const patchedGoTab = function(n) {
-    origGoTab(n);
+    goTab(n);
     if (n === 3) {
-      resizeCanvas();
-      if (!gameActive) startGame();
+      setTimeout(() => {
+        resizeCanvas();
+        const name = localStorage.getItem('rider_name');
+        if (!name) { showNameEntry(); }
+        else if (!gameActive) { startGame(); }
+      }, 50);
     } else {
       gameActive = false;
     }
   };
-  // Override goTab on tabs
-  document.querySelectorAll('.tab').forEach((t, i) => {
-    t.onclick = () => patchedGoTab(i);
-  });
+  document.querySelectorAll('.tab').forEach((t, i) => { t.onclick = () => patchedGoTab(i); });
 
   const rider = { x: 70, y: 0, velocity: 0, gravity: 0.42, lift: -7.5, size: 28, tiltFrame: 0 };
   let pipes = [], gFrame = 0, score = 0, bestScore = 0, gOver = false, started = false;
 
+  window.resetGame = function() {
+    rider.y = canvas.height / 2 - 20;
+    rider.velocity = 0;
+    pipes = []; gFrame = 0; score = 0; gOver = false; started = false;
+    document.getElementById('game-score').textContent = '0';
+  };
+
+  window.startGame = function() {
+    resizeCanvas();
+    gameActive = true;
+    resetGame();
+    if (animId) cancelAnimationFrame(animId);
+    loop();
+  };
+
   function flap(e) {
-    if (!gameActive) return;
+    if (!gameActive || gOver) return;
     if (e) e.stopPropagation();
-    if (gOver) { resetGame(); return; }
     if (!started) started = true;
     rider.velocity = rider.lift;
   }
@@ -783,18 +956,12 @@ for (let i = 0; i < 5; i++) setTimeout(spawnSnowflake, i * 400);
     pipes.push({ x: canvas.width, top: topH, bottom: topH + gap, width: 44, passed: false });
   }
 
-  function resetGame() {
-    rider.y = canvas.height / 2 - 20;
-    rider.velocity = 0;
-    pipes = []; gFrame = 0; score = 0; gOver = false; started = false;
-    document.getElementById('game-score').textContent = '0';
-  }
-
-  function startGame() {
-    gameActive = true;
-    resetGame();
-    if (animId) cancelAnimationFrame(animId);
-    loop();
+  function endGame() {
+    gOver = true;
+    gameActive = false;
+    const isNewBest = score > bestScore;
+    if (isNewBest) { bestScore = score; document.getElementById('game-best').textContent = bestScore; }
+    setTimeout(() => showWipeout(score, isNewBest), 400);
   }
 
   function update() {
@@ -802,19 +969,15 @@ for (let i = 0; i < 5; i++) setTimeout(spawnSnowflake, i * 400);
     rider.velocity += rider.gravity;
     rider.y += rider.velocity;
     rider.tiltFrame++;
-
     if (rider.y > canvas.height - rider.size || rider.y < 0) { endGame(); return; }
-
     for (let p of pipes) {
       p.x -= 2.2;
-      const hit = rider.x + rider.size - 6 > p.x &&
-                  rider.x + 6 < p.x + p.width &&
+      const hit = rider.x + rider.size - 6 > p.x && rider.x + 6 < p.x + p.width &&
                   (rider.y + 4 < p.top || rider.y + rider.size - 4 > p.bottom);
       if (hit) { endGame(); return; }
       if (!p.passed && p.x + p.width < rider.x) {
         p.passed = true; score++;
         document.getElementById('game-score').textContent = score;
-        if (score > bestScore) { bestScore = score; document.getElementById('game-best').textContent = bestScore; }
       }
     }
     pipes = pipes.filter(p => p.x + p.width > 0);
@@ -822,159 +985,70 @@ for (let i = 0; i < 5; i++) setTimeout(spawnSnowflake, i * 400);
     gFrame++;
   }
 
-  function endGame() {
-    gOver = true;
-  }
-
   function drawBackground() {
-    // Sky gradient
     const sky = ctx.createLinearGradient(0, 0, 0, canvas.height);
-    sky.addColorStop(0, '#050b18');
-    sky.addColorStop(1, '#0a1628');
-    ctx.fillStyle = sky;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    // Grid lines
-    ctx.strokeStyle = 'rgba(0,229,255,0.04)';
-    ctx.lineWidth = 1;
-    for (let x = 0; x < canvas.width; x += canvas.width / 3) {
-      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
-    }
-    for (let y = 0; y < canvas.height; y += canvas.height / 4) {
-      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
-    }
-    // Ground
-    ctx.fillStyle = 'rgba(0,229,255,0.08)';
-    ctx.fillRect(0, canvas.height - 4, canvas.width, 4);
+    sky.addColorStop(0, '#050b18'); sky.addColorStop(1, '#0a1628');
+    ctx.fillStyle = sky; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = 'rgba(0,229,255,0.04)'; ctx.lineWidth = 1;
+    for (let x = 0; x < canvas.width; x += canvas.width / 3) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,canvas.height); ctx.stroke(); }
+    for (let y = 0; y < canvas.height; y += canvas.height / 4) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(canvas.width,y); ctx.stroke(); }
+    ctx.fillStyle = 'rgba(0,229,255,0.08)'; ctx.fillRect(0, canvas.height-4, canvas.width, 4);
   }
 
   function drawPipes() {
     for (let p of pipes) {
-      // Top gate
-      const gTop = ctx.createLinearGradient(p.x, 0, p.x + p.width, 0);
-      gTop.addColorStop(0, 'rgba(41,121,255,0.7)');
-      gTop.addColorStop(1, 'rgba(0,229,255,0.5)');
-      ctx.fillStyle = gTop;
-      ctx.beginPath();
-      ctx.roundRect ? ctx.roundRect(p.x, 0, p.width, p.top - 6, [0, 0, 6, 6])
-                    : ctx.rect(p.x, 0, p.width, p.top - 6);
-      ctx.fill();
-      // Top cap glow
-      ctx.fillStyle = 'rgba(0,229,255,0.9)';
-      ctx.fillRect(p.x - 3, p.top - 10, p.width + 6, 8);
-      ctx.shadowColor = 'rgba(0,229,255,0.8)';
-      ctx.shadowBlur = 10;
-      ctx.fillRect(p.x - 3, p.top - 10, p.width + 6, 4);
-      ctx.shadowBlur = 0;
-
-      // Bottom gate
-      const gBot = ctx.createLinearGradient(p.x, 0, p.x + p.width, 0);
-      gBot.addColorStop(0, 'rgba(41,121,255,0.7)');
-      gBot.addColorStop(1, 'rgba(0,229,255,0.5)');
-      ctx.fillStyle = gBot;
-      ctx.beginPath();
-      ctx.roundRect ? ctx.roundRect(p.x, p.bottom + 6, p.width, canvas.height - p.bottom - 6, [6, 6, 0, 0])
-                    : ctx.rect(p.x, p.bottom + 6, p.width, canvas.height - p.bottom - 6);
-      ctx.fill();
-      // Bottom cap glow
-      ctx.fillStyle = 'rgba(0,229,255,0.9)';
-      ctx.fillRect(p.x - 3, p.bottom + 2, p.width + 6, 8);
-      ctx.shadowColor = 'rgba(0,229,255,0.8)';
-      ctx.shadowBlur = 10;
-      ctx.fillRect(p.x - 3, p.bottom + 6, p.width + 6, 4);
-      ctx.shadowBlur = 0;
+      const g1 = ctx.createLinearGradient(p.x,0,p.x+p.width,0);
+      g1.addColorStop(0,'rgba(41,121,255,0.7)'); g1.addColorStop(1,'rgba(0,229,255,0.5)');
+      ctx.fillStyle = g1;
+      ctx.beginPath(); ctx.roundRect ? ctx.roundRect(p.x,0,p.width,p.top-6,[0,0,6,6]) : ctx.rect(p.x,0,p.width,p.top-6); ctx.fill();
+      ctx.fillStyle='rgba(0,229,255,0.9)'; ctx.fillRect(p.x-3,p.top-10,p.width+6,8);
+      ctx.shadowColor='rgba(0,229,255,0.8)'; ctx.shadowBlur=10; ctx.fillRect(p.x-3,p.top-10,p.width+6,4); ctx.shadowBlur=0;
+      ctx.fillStyle = g1;
+      ctx.beginPath(); ctx.roundRect ? ctx.roundRect(p.x,p.bottom+6,p.width,canvas.height-p.bottom-6,[6,6,0,0]) : ctx.rect(p.x,p.bottom+6,p.width,canvas.height-p.bottom-6); ctx.fill();
+      ctx.fillStyle='rgba(0,229,255,0.9)'; ctx.fillRect(p.x-3,p.bottom+2,p.width+6,8);
+      ctx.shadowColor='rgba(0,229,255,0.8)'; ctx.shadowBlur=10; ctx.fillRect(p.x-3,p.bottom+6,p.width+6,4); ctx.shadowBlur=0;
     }
   }
 
   function drawRider() {
     ctx.save();
-    const angle = Math.min(Math.max(rider.velocity * 0.075, -0.55), 1.1);
-    ctx.translate(rider.x + rider.size / 2, rider.y + rider.size / 2);
-    ctx.rotate(angle);
-
-    // Board glow
-    ctx.shadowColor = 'rgba(0,229,255,0.6)';
-    ctx.shadowBlur = 8;
-    ctx.fillStyle = '#00e5ff';
-    ctx.fillRect(-18, 9, 36, 5);
-    ctx.shadowBlur = 0;
-
-    // Bindings
-    ctx.fillStyle = '#0077ff';
-    ctx.fillRect(-10, 7, 6, 6);
-    ctx.fillRect(4, 7, 6, 6);
-
-    // Legs
-    const bounce = Math.sin(rider.tiltFrame * 0.2) * 1.5;
-    ctx.fillStyle = '#1a3a5c';
-    ctx.fillRect(-6, 10 + bounce, 5, 9);
-    ctx.fillRect(1, 10 - bounce, 5, 9);
-
-    // Jacket
-    ctx.fillStyle = '#2979ff';
-    ctx.fillRect(-6, -2, 12, 11);
-
-    // Head
-    ctx.fillStyle = '#ffcc99';
-    ctx.beginPath(); ctx.arc(0, -7, 7, 0, Math.PI * 2); ctx.fill();
-
-    // Helmet
-    ctx.fillStyle = '#00e5ff';
-    ctx.shadowColor = 'rgba(0,229,255,0.5)';
-    ctx.shadowBlur = 6;
-    ctx.beginPath(); ctx.arc(0, -10, 6, Math.PI, 0); ctx.fill();
-    ctx.shadowBlur = 0;
-
-    // Goggles
-    ctx.fillStyle = '#ff4d00';
-    ctx.fillRect(-5, -9, 10, 4);
-
+    const angle = Math.min(Math.max(rider.velocity*0.075,-0.55),1.1);
+    ctx.translate(rider.x+rider.size/2, rider.y+rider.size/2); ctx.rotate(angle);
+    ctx.shadowColor='rgba(0,229,255,0.6)'; ctx.shadowBlur=8; ctx.fillStyle='#00e5ff'; ctx.fillRect(-18,9,36,5); ctx.shadowBlur=0;
+    ctx.fillStyle='#0077ff'; ctx.fillRect(-10,7,6,6); ctx.fillRect(4,7,6,6);
+    const bounce=Math.sin(rider.tiltFrame*0.2)*1.5;
+    ctx.fillStyle='#1a3a5c'; ctx.fillRect(-6,10+bounce,5,9); ctx.fillRect(1,10-bounce,5,9);
+    ctx.fillStyle='#2979ff'; ctx.fillRect(-6,-2,12,11);
+    ctx.fillStyle='#ffcc99'; ctx.beginPath(); ctx.arc(0,-7,7,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#00e5ff'; ctx.shadowColor='rgba(0,229,255,0.5)'; ctx.shadowBlur=6;
+    ctx.beginPath(); ctx.arc(0,-10,6,Math.PI,0); ctx.fill(); ctx.shadowBlur=0;
+    ctx.fillStyle='#ff4d00'; ctx.fillRect(-5,-9,10,4);
     ctx.restore();
   }
 
   function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
     drawBackground();
     if (!started && !gOver) {
-      // Start screen
-      ctx.fillStyle = 'rgba(0,229,255,0.15)';
-      ctx.beginPath(); ctx.arc(canvas.width/2, canvas.height/2 - 30, 34, 0, Math.PI*2); ctx.fill();
-      ctx.fillStyle = 'rgba(0,229,255,0.9)';
-      ctx.font = 'bold 28px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('▶', canvas.width/2 + 3, canvas.height/2 - 18);
-      ctx.fillStyle = 'rgba(255,255,255,0.7)';
-      ctx.font = '13px sans-serif';
-      ctx.fillText('Tap to start!', canvas.width/2, canvas.height/2 + 18);
-      ctx.textAlign = 'left';
+      ctx.fillStyle='rgba(0,229,255,0.15)';
+      ctx.beginPath(); ctx.arc(canvas.width/2,canvas.height/2-30,34,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='rgba(0,229,255,0.9)'; ctx.font='bold 28px sans-serif'; ctx.textAlign='center';
+      ctx.fillText('▶',canvas.width/2+3,canvas.height/2-18);
+      const name = localStorage.getItem('rider_name') || 'Rider';
+      ctx.fillStyle='rgba(255,255,255,0.7)'; ctx.font='13px sans-serif';
+      ctx.fillText(`Tap to shred, ${name}!`,canvas.width/2,canvas.height/2+18);
+      ctx.textAlign='left';
     }
-    drawPipes();
-    drawRider();
-    if (gOver) {
-      ctx.fillStyle = 'rgba(5,11,24,0.75)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.textAlign = 'center';
-      ctx.fillStyle = '#ff4d4d';
-      ctx.shadowColor = '#ff4d4d'; ctx.shadowBlur = 12;
-      ctx.font = 'bold 22px sans-serif';
-      ctx.fillText('WIPEOUT! 💥', canvas.width/2, canvas.height/2 - 24);
-      ctx.shadowBlur = 0;
-      ctx.fillStyle = 'rgba(0,229,255,0.9)';
-      ctx.font = '14px sans-serif';
-      ctx.fillText(`Score: ${score}  ·  Best: ${bestScore}`, canvas.width/2, canvas.height/2 + 8);
-      ctx.fillStyle = 'rgba(255,255,255,0.6)';
-      ctx.font = '12px sans-serif';
-      ctx.fillText('Tap to try again', canvas.width/2, canvas.height/2 + 34);
-      ctx.textAlign = 'left';
-    }
+    drawPipes(); drawRider();
   }
 
   function loop() {
     if (!gameActive) return;
-    if (!gOver) update();
-    draw();
+    update(); draw();
     animId = requestAnimationFrame(loop);
   }
 })();
+
 
 if ('serviceWorker' in navigator) {
   const swCode = `
