@@ -804,24 +804,48 @@ async function fetchLeaderboard() {
 }
 
 async function upsertScore(playerName, newScore) {
-  // Check existing score
-  const res = await sbFetch(`/rest/v1/leaderboard?player_name=eq.${encodeURIComponent(playerName)}&select=score`);
-  const rows = res.ok ? await res.json() : [];
-  if (rows.length > 0) {
-    if (newScore <= rows[0].score) return false; // not a new best
-    await sbFetch(`/rest/v1/leaderboard?player_name=eq.${encodeURIComponent(playerName)}`, {
-      method: 'PATCH',
-      prefer: 'return=minimal',
-      body: JSON.stringify({ score: newScore })
-    });
-  } else {
-    await sbFetch('/rest/v1/leaderboard', {
+  // Use ON CONFLICT upsert — requires player_name to have a unique constraint
+  // First try a direct upsert (insert or update if score is higher)
+  const res = await sbFetch('/rest/v1/leaderboard', {
+    method: 'POST',
+    prefer: 'return=representation,resolution=merge-duplicates',
+    headers: { 'Prefer': 'return=representation,resolution=merge-duplicates' },
+    body: JSON.stringify({ player_name: playerName, score: newScore })
+  });
+
+  if (res.ok) {
+    const data = await res.json();
+    console.log('Upsert success:', data);
+    return true;
+  }
+
+  // Fallback: check existing then patch if higher
+  console.warn('Upsert failed, trying fallback. Status:', res.status, await res.text());
+  const checkRes = await sbFetch(`/rest/v1/leaderboard?player_name=eq.${encodeURIComponent(playerName)}&select=id,score`);
+  if (!checkRes.ok) { console.error('Check failed:', checkRes.status); return false; }
+  const rows = await checkRes.json();
+
+  if (rows.length === 0) {
+    // Insert fresh
+    const ins = await sbFetch('/rest/v1/leaderboard', {
       method: 'POST',
       prefer: 'return=minimal',
+      headers: { 'Prefer': 'return=minimal' },
       body: JSON.stringify({ player_name: playerName, score: newScore })
     });
+    console.log('Insert status:', ins.status);
+    return ins.ok;
+  } else {
+    if (newScore <= rows[0].score) return false; // not better
+    const patch = await sbFetch(`/rest/v1/leaderboard?player_name=eq.${encodeURIComponent(playerName)}`, {
+      method: 'PATCH',
+      prefer: 'return=minimal',
+      headers: { 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ score: newScore })
+    });
+    console.log('Patch status:', patch.status);
+    return patch.ok;
   }
-  return true;
 }
 
 // ── Leaderboard UI ──
