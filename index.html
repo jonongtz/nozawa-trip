@@ -277,37 +277,7 @@ body{display:flex;flex-direction:column}
         <div style="margin-top:4px" class="timeline" id="itinerary-timeline"></div>
       </div>
 
-      <!-- Edit / Add Itinerary Entry Modal -->
-      <div id="overlay-edit-itinerary" style="display:none;position:fixed;inset:0;z-index:50;background:rgba(5,11,24,0.97);flex-direction:column;align-items:center;justify-content:center;padding:24px;overflow-y:auto">
-        <div style="width:100%;max-width:340px">
-          <div id="iti-modal-title" style="font-size:15px;font-weight:800;color:var(--cyan);letter-spacing:1px;margin-bottom:18px;text-align:center">✏️ Edit Entry</div>
-
-          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Date Label</div>
-          <input id="iti-edit-date" type="text" maxlength="40"
-            style="width:100%;padding:11px 14px;background:rgba(5,11,24,0.95);border:1px solid rgba(0,229,255,0.25);border-radius:10px;color:var(--text);font-size:13px;outline:none;margin-bottom:14px;letter-spacing:.5px">
-
-          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Title</div>
-          <input id="iti-edit-title" type="text" maxlength="60"
-            style="width:100%;padding:11px 14px;background:rgba(5,11,24,0.95);border:1px solid rgba(0,229,255,0.25);border-radius:10px;color:var(--text);font-size:13px;outline:none;margin-bottom:14px;letter-spacing:.5px">
-
-          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Subtitle</div>
-          <input id="iti-edit-sub" type="text" maxlength="80"
-            style="width:100%;padding:11px 14px;background:rgba(5,11,24,0.95);border:1px solid rgba(0,229,255,0.25);border-radius:10px;color:var(--text);font-size:13px;outline:none;margin-bottom:14px;letter-spacing:.5px">
-
-          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Badge Type</div>
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px" id="iti-badge-picker">
-            <div class="iti-badge-opt badge-fly" data-badge="fly" onclick="selectItiBadge('fly')">✈ Flight</div>
-            <div class="iti-badge-opt badge-travel" data-badge="travel" onclick="selectItiBadge('travel')">🚄 Travel</div>
-            <div class="iti-badge-opt badge-ski" data-badge="ski" onclick="selectItiBadge('ski')">🏂 Shred</div>
-            <div class="iti-badge-opt badge-home" data-badge="home" onclick="selectItiBadge('home')">✈ Home</div>
-          </div>
-
-          <div style="display:flex;gap:10px">
-            <button onclick="closeEditItinerary()" style="flex:1;padding:13px;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer">Cancel</button>
-            <button id="iti-save-btn" onclick="saveEditItinerary()" style="flex:2;padding:13px;background:linear-gradient(135deg,var(--blue),var(--cyan));border:none;border-radius:10px;color:#050b18;font-size:13px;font-weight:800;letter-spacing:1.5px;cursor:pointer;text-transform:uppercase">Save →</button>
-          </div>
-        </div>
-      </div>
+      <!-- Edit / Add Itinerary Entry Modal moved to body level below -->
     </div>
 
     <!-- WEATHER -->
@@ -425,6 +395,38 @@ body{display:flex;flex-direction:column}
       </div>
     </div>
 
+  </div>
+</div>
+
+<!-- Itinerary Edit / Add Modal — must be at body level, outside slides (will-change:transform traps fixed children) -->
+<div id="overlay-edit-itinerary" style="display:none;position:fixed;inset:0;z-index:50;background:rgba(5,11,24,0.97);flex-direction:column;align-items:center;justify-content:center;padding:24px;overflow-y:auto">
+  <div style="width:100%;max-width:340px">
+    <div id="iti-modal-title" style="font-size:15px;font-weight:800;color:var(--cyan);letter-spacing:1px;margin-bottom:18px;text-align:center">✏️ Edit Entry</div>
+
+    <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Date Label</div>
+    <input id="iti-edit-date" type="text" maxlength="40"
+      style="width:100%;padding:11px 14px;background:rgba(5,11,24,0.95);border:1px solid rgba(0,229,255,0.25);border-radius:10px;color:var(--text);font-size:13px;outline:none;margin-bottom:14px;letter-spacing:.5px">
+
+    <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Title</div>
+    <input id="iti-edit-title" type="text" maxlength="60"
+      style="width:100%;padding:11px 14px;background:rgba(5,11,24,0.95);border:1px solid rgba(0,229,255,0.25);border-radius:10px;color:var(--text);font-size:13px;outline:none;margin-bottom:14px;letter-spacing:.5px">
+
+    <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Subtitle</div>
+    <input id="iti-edit-sub" type="text" maxlength="80"
+      style="width:100%;padding:11px 14px;background:rgba(5,11,24,0.95);border:1px solid rgba(0,229,255,0.25);border-radius:10px;color:var(--text);font-size:13px;outline:none;margin-bottom:14px;letter-spacing:.5px">
+
+    <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Badge Type</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px" id="iti-badge-picker">
+      <div class="iti-badge-opt badge-fly" data-badge="fly" onclick="selectItiBadge('fly')">✈ Flight</div>
+      <div class="iti-badge-opt badge-travel" data-badge="travel" onclick="selectItiBadge('travel')">🚄 Travel</div>
+      <div class="iti-badge-opt badge-ski" data-badge="ski" onclick="selectItiBadge('ski')">🏂 Shred</div>
+      <div class="iti-badge-opt badge-home" data-badge="home" onclick="selectItiBadge('home')">✈ Home</div>
+    </div>
+
+    <div style="display:flex;gap:10px">
+      <button onclick="closeEditItinerary()" style="flex:1;padding:13px;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer">Cancel</button>
+      <button id="iti-save-btn" onclick="saveEditItinerary()" style="flex:2;padding:13px;background:linear-gradient(135deg,var(--blue),var(--cyan));border:none;border-radius:10px;color:#050b18;font-size:13px;font-weight:800;letter-spacing:1.5px;cursor:pointer;text-transform:uppercase">Save →</button>
+    </div>
   </div>
 </div>
 
