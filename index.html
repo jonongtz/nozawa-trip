@@ -102,6 +102,9 @@ body{display:flex;flex-direction:column}
 .wx-btn.b-snow{border-color:rgba(167,139,250,0.35);color:var(--violet);background:rgba(124,77,255,0.06)}
 .wx-btn.b-weather-m{border-color:rgba(167,139,250,0.35);color:var(--violet);background:rgba(124,77,255,0.06)}
 .wx-btn.b-snow-m{border-color:rgba(96,165,250,0.35);color:#60a5fa;background:rgba(96,165,250,0.06)}
+.wx-btn.b-map{border-color:rgba(74,222,128,0.35);color:#4ade80;background:rgba(74,222,128,0.06);cursor:pointer}
+.wx-btn.b-map-m{border-color:rgba(167,139,250,0.35);color:var(--violet);background:rgba(124,77,255,0.06);cursor:pointer}
+.wx-btn.b-map.has-map,.wx-btn.b-map-m.has-map{box-shadow:0 0 10px rgba(74,222,128,0.2)}
 .resort-divider{height:1px;background:var(--border);margin:4px 0 16px}
 .snowflake{position:fixed;top:-20px;pointer-events:none;z-index:2;color:rgba(0,229,255,0.3);font-size:12px;animation:fall linear infinite}
 @keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:.8}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
@@ -313,14 +316,16 @@ body{display:flex;flex-direction:column}
         <div class="resort-header"><div><div class="resort-name rn-nozawa">Nozawa Onsen</div><div class="resort-country">Nagano Prefecture · Japan</div></div><span class="resort-elev elev-n">1,650m</span></div>
         <div class="btn-row">
           <a class="wx-btn b-weather" href="https://www.skiresort.info/ski-resort/nozawa-onsen/weather/" target="_blank">⛅ Weather</a>
-          <a class="wx-btn b-snow" href="https://www.snow-forecast.com/resorts/Nozawa-Onsen/6day/mid" target="_blank">❄ Snow Forecast</a>
+          <a class="wx-btn b-snow" href="https://www.snow-forecast.com/resorts/Nozawa-Onsen/6day/mid" target="_blank">❄ Snow</a>
+          <a class="wx-btn b-map" href="https://en.nozawaski.com/pdf/gelandemap2023-24_en.pdf" target="_blank">🗺 Map</a>
         </div>
       </div>
       <div class="card">
         <div class="resort-header"><div><div class="resort-name rn-madarao">Madarao</div><div class="resort-country">Nagano Prefecture · Japan</div></div><span class="resort-elev elev-m">1,382m</span></div>
         <div class="btn-row">
           <a class="wx-btn b-weather-m" href="https://www.skiresort.info/ski-resort/madarao-tangram/weather/" target="_blank">⛅ Weather</a>
-          <a class="wx-btn b-snow-m" href="https://www.snow-forecast.com/resorts/Madarao/6day/mid" target="_blank">❄ Snow Forecast</a>
+          <a class="wx-btn b-snow-m" href="https://www.snow-forecast.com/resorts/Madarao/6day/mid" target="_blank">❄ Snow</a>
+          <a class="wx-btn b-map-m" href="https://myokotourism.com/wp-content/uploads/2020/12/Madarao-Course-Map.pdf" target="_blank">🗺 Map</a>
         </div>
       </div>
       <div class="card">
@@ -332,6 +337,7 @@ body{display:flex;flex-direction:column}
         <div class="trip-stat"><span class="trip-stat-label">Base Depth</span><span class="trip-stat-val">120 – 200cm avg</span></div>
       </div>
     </div>
+
 
     <!-- CHALLENGE -->
     <div class="slide" style="padding:0;overflow:hidden;position:relative;display:flex;flex-direction:column">
