@@ -46,7 +46,8 @@ body{display:flex;flex-direction:column}
 .cnt-box{background:rgba(0,229,255,0.04);border:1px solid rgba(0,229,255,0.12);border-radius:12px;padding:14px 4px;text-align:center}
 .cnt-val{font-size:30px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1;background:linear-gradient(180deg,#fff 20%,var(--cyan) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .cnt-lbl{font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:5px}
-.cnt-box.seconds{border-color:rgba(0,229,255,0.25);box-shadow:inset 0 0 12px rgba(0,229,255,0.05)}
+.cnt-box.seconds{border-color:rgba(0,229,255,0.25);box-shadow:inset 0 0 12px rgba(0,229,255,0.05);animation:sec-pulse 1s steps(1) infinite}
+@keyframes sec-pulse{0%{box-shadow:inset 0 0 12px rgba(0,229,255,0.05),0 0 8px rgba(0,229,255,0.08)}50%{box-shadow:inset 0 0 12px rgba(0,229,255,0.12),0 0 14px rgba(0,229,255,0.18)}}
 .crew-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:2px}
 .crew-member{display:flex;align-items:center;gap:10px;background:rgba(0,229,255,0.04);border:1px solid rgba(0,229,255,0.10);border-radius:12px;padding:10px 12px;position:relative;overflow:visible}
 .crew-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;letter-spacing:.5px}
@@ -114,6 +115,13 @@ body{display:flex;flex-direction:column}
 .score-chip.perfect{color:#fbbf24;border-color:rgba(251,191,36,0.4);background:rgba(251,191,36,0.06)}
 .lb-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;margin-bottom:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);transition:all .2s}
 .lb-row.me{background:rgba(0,229,255,0.08);border-color:rgba(0,229,255,0.25)}
+.crew-del-btn{position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:50%;background:#ef4444;border:2px solid var(--bg);color:#fff;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;line-height:1;box-shadow:0 0 8px rgba(239,68,68,0.6);transition:transform .15s}
+.crew-del-btn:active{transform:scale(0.85)}
+.delete-mode .crew-member{animation:delete-wiggle .3s ease-in-out infinite alternate}
+@keyframes delete-wiggle{0%{transform:rotate(-1deg)}100%{transform:rotate(1deg)}}
+.crew-member.new-entry{animation:crew-pop .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes crew-pop{0%{opacity:0;transform:scale(0.6)}100%{opacity:1;transform:scale(1)}}
+.btn-del-crew.active{background:rgba(239,68,68,0.15)!important;border-color:rgba(239,68,68,0.6)!important;color:#ff6b6b!important}
 </style>
 </head>
 <body>
@@ -162,23 +170,18 @@ body{display:flex;flex-direction:column}
           <div class="summary-tile"><div class="summary-tile-lbl">Trip Start</div><div class="summary-tile-val">23 Jan</div><div class="summary-tile-sub">2027</div></div>
           <div class="summary-tile"><div class="summary-tile-lbl">Trip End</div><div class="summary-tile-val">29 Jan</div><div class="summary-tile-sub">2027</div></div>
           <div class="summary-tile"><div class="summary-tile-lbl">Duration</div><div class="summary-tile-val">7</div><div class="summary-tile-sub">Nights</div></div>
-          <div class="summary-tile"><div class="summary-tile-lbl">Crew</div><div class="summary-tile-val">10</div><div class="summary-tile-sub">Riders</div></div>
+          <div class="summary-tile"><div class="summary-tile-lbl">Crew</div><div class="summary-tile-val" id="crew-count">10</div><div class="summary-tile-sub">Riders</div></div>
         </div>
       </div>
       <div class="card">
-        <div class="card-label">👥 The Crew · 10 Riders</div>
-        <div class="crew-grid">
-          <div class="crew-member" id="cm-Jon"><div class="crew-avatar av-1">JO</div><div><div class="crew-name">Jon</div><div class="crew-role">The Instigator</div></div></div>
-          <div class="crew-member" id="cm-YY"><div class="crew-avatar av-2">YY</div><div><div class="crew-name">YY</div><div class="crew-role">Powder Gremlin</div></div></div>
-          <div class="crew-member" id="cm-Hun"><div class="crew-avatar av-3">HU</div><div><div class="crew-name">Hun</div><div class="crew-role">Send It Hun</div></div></div>
-          <div class="crew-member" id="cm-Emily"><div class="crew-avatar av-4">EM</div><div><div class="crew-name">Emily</div><div class="crew-role">Chairlift DJ</div></div></div>
-          <div class="crew-member" id="cm-Mark"><div class="crew-avatar av-5">MK</div><div><div class="crew-name">Mark</div><div class="crew-role">Slope Goblin</div></div></div>
-          <div class="crew-member" id="cm-Lynette"><div class="crew-avatar av-6">LY</div><div><div class="crew-name">Lynette</div><div class="crew-role">Mogul Menace</div></div></div>
-          <div class="crew-member" id="cm-Jan"><div class="crew-avatar av-7">JN</div><div><div class="crew-name">Jan</div><div class="crew-role">Backside Jan</div></div></div>
-          <div class="crew-member" id="cm-Galvin"><div class="crew-avatar av-8">GV</div><div><div class="crew-name">Galvin</div><div class="crew-role">Wipeout King</div></div></div>
-          <div class="crew-member" id="cm-Weirong"><div class="crew-avatar av-9">WR</div><div><div class="crew-name">Weirong</div><div class="crew-role">Japow Hunter</div></div></div>
-          <div class="crew-member" id="cm-Hui Xian"><div class="crew-avatar av-10">HX</div><div><div class="crew-name">Hui Xian</div><div class="crew-role">Après Queen</div></div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div class="card-label" style="margin-bottom:0" id="crew-card-label">👥 The Crew · 10 Riders</div>
+          <div style="display:flex;gap:7px">
+            <button id="btn-add-crew" onclick="openAddCrew()" style="display:flex;align-items:center;gap:5px;padding:6px 11px;border-radius:8px;border:1px solid rgba(0,229,255,0.35);background:rgba(0,229,255,0.07);color:var(--cyan);font-size:10px;font-weight:800;letter-spacing:1px;cursor:pointer;text-transform:uppercase">＋ Add</button>
+            <button id="btn-del-crew" onclick="toggleDeleteMode()" style="display:flex;align-items:center;gap:5px;padding:6px 11px;border-radius:8px;border:1px solid rgba(239,68,68,0.3);background:rgba(239,68,68,0.05);color:#f87171;font-size:10px;font-weight:800;letter-spacing:1px;cursor:pointer;text-transform:uppercase">✕ Delete</button>
+          </div>
         </div>
+        <div class="crew-grid" id="crew-grid"></div>
       </div>
       <div class="card">
         <div class="card-label">🏠 Accommodation</div>
@@ -194,9 +197,20 @@ body{display:flex;flex-direction:column}
           <a href="https://maps.app.goo.gl/FwYyeXcBWYMXgaiQ9?g_st=iw" target="_blank" style="flex:1;display:block;padding:11px 8px;border-radius:10px;border:1px solid rgba(74,222,128,0.35);color:#4ade80;background:rgba(74,222,128,0.06);font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-align:center;text-decoration:none">📍 Maps</a>
         </div>
       </div>
+      <!-- Add Crew Modal -->
+      <div id="overlay-add-crew" style="display:none;position:fixed;inset:0;z-index:50;background:rgba(5,11,24,0.97);flex-direction:column;align-items:center;justify-content:center;padding:28px">
+        <div style="font-size:32px;margin-bottom:10px">🏂</div>
+        <div style="font-size:17px;font-weight:800;color:var(--cyan);letter-spacing:1px;margin-bottom:4px">Add Crew Member</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:22px;text-align:center">A tag will be auto-generated</div>
+        <input id="add-crew-input" type="text" maxlength="20" placeholder="Enter name…"
+          style="width:100%;max-width:280px;padding:13px 16px;background:rgba(5,11,24,0.95);border:1px solid rgba(0,229,255,0.3);border-radius:10px;color:var(--text);font-size:15px;font-weight:600;text-align:center;outline:none;margin-bottom:14px;letter-spacing:1px;-webkit-appearance:none"
+          oninput="this.style.borderColor='rgba(0,229,255,0.3)'"
+          onkeydown="if(event.key==='Enter')confirmAddCrew()">
+        <div id="add-crew-preview" style="font-size:10px;color:var(--muted);margin-bottom:16px;letter-spacing:1px;min-height:16px"></div>
+        <button onclick="confirmAddCrew()" style="width:100%;max-width:280px;padding:14px;background:linear-gradient(135deg,var(--blue),var(--cyan));border:none;border-radius:10px;color:#050b18;font-size:13px;font-weight:800;letter-spacing:2px;cursor:pointer;text-transform:uppercase;margin-bottom:10px">Add to Crew →</button>
+        <button onclick="closeAddCrew()" style="width:100%;max-width:280px;padding:11px;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer">Cancel</button>
+      </div>
     </div>
-
-    <!-- ITINERARY -->
     <div class="slide">
       <div class="card">
         <div class="card-label">📅 Full Schedule</div>
@@ -252,16 +266,6 @@ body{display:flex;flex-direction:column}
         <select id="name-input"
           style="width:100%;max-width:280px;padding:13px 16px;background:rgba(5,11,24,0.95);border:1px solid rgba(0,229,255,0.3);border-radius:10px;color:var(--text);font-size:15px;font-weight:600;text-align:center;outline:none;margin-bottom:12px;letter-spacing:1px;-webkit-appearance:none;appearance:none;cursor:pointer;text-align-last:center">
           <option value="" disabled selected style="color:#5a7a9a">— Select your name —</option>
-          <option value="Jon">Jon · The Instigator</option>
-          <option value="YY">YY · Powder Gremlin</option>
-          <option value="Hun">Hun · Send It Hun</option>
-          <option value="Emily">Emily · Chairlift DJ</option>
-          <option value="Mark">Mark · Slope Goblin</option>
-          <option value="Lynette">Lynette · Mogul Menace</option>
-          <option value="Jan">Jan · Backside Jan</option>
-          <option value="Galvin">Galvin · Wipeout King</option>
-          <option value="Weirong">Weirong · Japow Hunter</option>
-          <option value="Hui Xian">Hui Xian · Après Queen</option>
         </select>
         <div style="position:relative;width:100%;max-width:280px;margin-top:-20px;margin-bottom:12px;pointer-events:none;display:flex;justify-content:flex-end;padding-right:14px">
           <span style="color:var(--cyan);font-size:12px">▼</span>
@@ -291,6 +295,7 @@ body{display:flex;flex-direction:column}
             <div style="font-size:10px;color:var(--muted);margin-top:2px">Tap CYAN · ignore RED · 5 rounds</div>
           </div>
           <button onclick="showLeaderboard()" style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);color:var(--cyan);font-size:10px;font-weight:700;padding:7px 11px;border-radius:8px;cursor:pointer;letter-spacing:1px;flex-shrink:0">🏆 BOARD</button>
+          <button onclick="changeRider()" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--muted);font-size:10px;font-weight:700;padding:7px 9px;border-radius:8px;cursor:pointer;letter-spacing:1px;flex-shrink:0">👤</button>
         </div>
         <!-- Round dots -->
         <div style="display:flex;justify-content:center;gap:8px;padding:0 16px 8px;flex-shrink:0">
@@ -342,7 +347,7 @@ body{display:flex;flex-direction:column}
 <!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, limit, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, query, orderBy, limit, getDocs, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 // ── PASTE YOUR FIREBASE CONFIG HERE ──
 const firebaseConfig = {
@@ -376,6 +381,29 @@ window.fbGetLeaderboard = async () => {
     const snap = await getDocs(q);
     return snap.docs.map(d => d.data());
   } catch(e) { console.error('Firebase fetch error:', e); return []; }
+};
+
+// ── Crew Firestore functions ──
+window.fbSaveCrew = async (crewArray) => {
+  try {
+    await setDoc(doc(db, 'crew', 'roster'), { members: crewArray, updatedAt: Date.now() });
+    return true;
+  } catch(e) { console.error('Crew save error:', e); return false; }
+};
+
+window.fbGetCrew = async () => {
+  try {
+    const snap = await getDoc(doc(db, 'crew', 'roster'));
+    if (snap.exists()) return snap.data().members || [];
+    return null; // null = not yet seeded
+  } catch(e) { console.error('Crew fetch error:', e); return null; }
+};
+
+// Real-time listener — fires whenever any device updates the crew
+window.fbWatchCrew = (callback) => {
+  return onSnapshot(doc(db, 'crew', 'roster'), (snap) => {
+    if (snap.exists()) callback(snap.data().members || []);
+  }, (err) => console.error('Crew watch error:', err));
 };
 </script>
 
@@ -412,6 +440,255 @@ vp.addEventListener('touchend', e => {
   else goTab(curTab);
 });
 
+// ── Crew Management ──
+const MAX_CREW = 16;
+const CREW_TAGS = [
+  'The Instigator','Powder Gremlin','Send It Hun','Chairlift DJ',
+  'Slope Goblin','Mogul Menace','Backside Jan','Wipeout King',
+  'Japow Hunter','Après Queen','Park Rat','Snow Ghost',
+  'Corduroy King','Tree Shredder','Freshies Fiend','Summit Seeker',
+  'Pow Chaser','Lift Line Legend','Board Breaker','Ice Princess',
+  'Gnar Gremlin','Steeze Machine','Yard Sale Pro','Drop Zone Hero'
+];
+const AV_PALETTES = [
+  ['#1e40af','#2979ff'],['#0f766e','#7c3aed'],['#92400e','#d97706'],
+  ['#831843','#db2777'],['#134e4a','#0d9488'],['#3b0764','#9333ea'],
+  ['#1c1917','#ef4444'],['#064e3b','#10b981'],['#1e3a5f','#06b6d4'],
+  ['#4a044e','#e879f9'],['#1e3a8a','#f59e0b'],['#14532d','#84cc16'],
+  ['#1e1b4b','#818cf8'],['#4c0519','#fb7185'],['#052e16','#34d399'],
+  ['#1c1917','#a3e635']
+];
+const AV_SHADOWS = [
+  'rgba(41,121,255,0.5)','rgba(124,77,255,0.45)','rgba(217,119,6,0.45)',
+  'rgba(219,39,119,0.45)','rgba(13,148,136,0.45)','rgba(147,51,234,0.45)',
+  'rgba(239,68,68,0.45)','rgba(16,185,129,0.45)','rgba(6,182,212,0.45)',
+  'rgba(232,121,249,0.45)','rgba(245,158,11,0.45)','rgba(132,204,22,0.45)',
+  'rgba(129,140,248,0.45)','rgba(251,113,133,0.45)','rgba(52,211,153,0.45)',
+  'rgba(163,230,53,0.45)'
+];
+
+const DEFAULT_CREW = [
+  {name:'Jon',tag:'The Instigator'},{name:'YY',tag:'Powder Gremlin'},
+  {name:'Hun',tag:'Send It Hun'},{name:'Emily',tag:'Chairlift DJ'},
+  {name:'Mark',tag:'Slope Goblin'},{name:'Lynette',tag:'Mogul Menace'},
+  {name:'Jan',tag:'Backside Jan'},{name:'Galvin',tag:'Wipeout King'},
+  {name:'Weirong',tag:'Japow Hunter'},{name:'Hui Xian',tag:'Après Queen'}
+];
+
+let crewData = [];
+let deleteMode = false;
+let usedTagIndices = new Set();
+let crewLoaded = false;
+
+function applyCrewData(members, animate = false) {
+  crewData = members;
+  usedTagIndices = new Set(crewData.map(c => CREW_TAGS.indexOf(c.tag)).filter(i => i >= 0));
+  renderCrew(animate);
+  loadHomeLeader();
+}
+
+async function loadCrewData() {
+  // Show loading state
+  document.getElementById('crew-grid').innerHTML =
+    '<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:20px 0;font-size:12px;letter-spacing:1px">Loading crew...</div>';
+
+  // Wait for Firebase to be ready (module loads async)
+  let attempts = 0;
+  while (!window.fbGetCrew && attempts < 30) {
+    await new Promise(r => setTimeout(r, 200));
+    attempts++;
+  }
+
+  if (!window.fbGetCrew) {
+    // Firebase never loaded — fall back to defaults
+    applyCrewData(DEFAULT_CREW.map((c,i) => ({...c, paletteIdx: i % AV_PALETTES.length})));
+    return;
+  }
+
+  try {
+    const members = await window.fbGetCrew();
+    if (members === null) {
+      // First time ever — seed Firestore with defaults
+      const defaults = DEFAULT_CREW.map((c,i) => ({...c, paletteIdx: i % AV_PALETTES.length}));
+      await window.fbSaveCrew(defaults);
+      applyCrewData(defaults);
+    } else {
+      applyCrewData(members);
+    }
+  } catch(e) {
+    applyCrewData(DEFAULT_CREW.map((c,i) => ({...c, paletteIdx: i % AV_PALETTES.length})));
+  }
+
+  crewLoaded = true;
+
+  // Start real-time listener for live updates from other devices
+  if (window.fbWatchCrew) {
+    window.fbWatchCrew((members) => {
+      applyCrewData(members);
+    });
+  }
+}
+
+async function saveCrewData() {
+  if (window.fbSaveCrew) {
+    await window.fbSaveCrew(crewData);
+  }
+  // Also mirror to localStorage as instant local cache
+  try { localStorage.setItem('nozawa_crew_cache', JSON.stringify(crewData)); } catch(e) {}
+}
+
+function getInitials(name) {
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  return name.trim().slice(0,2).toUpperCase();
+}
+
+function getNextTag() {
+  for (let i = 0; i < CREW_TAGS.length; i++) {
+    if (!usedTagIndices.has(i)) return { tag: CREW_TAGS[i], idx: i };
+  }
+  return { tag: 'Japow Rider', idx: -1 };
+}
+
+function getNextPaletteIdx() {
+  const used = new Set(crewData.map(c => c.paletteIdx));
+  for (let i = 0; i < AV_PALETTES.length; i++) { if (!used.has(i)) return i; }
+  return crewData.length % AV_PALETTES.length;
+}
+
+function renderCrew(animateLastEntry = false) {
+  const grid = document.getElementById('crew-grid');
+  const label = document.getElementById('crew-card-label');
+  const addBtn = document.getElementById('btn-add-crew');
+  const count = crewData.length;
+
+  label.textContent = `👥 The Crew · ${count} Rider${count !== 1 ? 's' : ''}`;
+  document.getElementById('crew-count').textContent = count;
+  if (addBtn) addBtn.style.opacity = count >= MAX_CREW ? '0.4' : '1';
+
+  grid.innerHTML = crewData.map((c, i) => {
+    const p = AV_PALETTES[c.paletteIdx ?? (i % AV_PALETTES.length)];
+    const sh = AV_SHADOWS[c.paletteIdx ?? (i % AV_PALETTES.length)];
+    const initials = getInitials(c.name);
+    const idSafe = c.name.replace(/ /g, '_');
+    const isLast = animateLastEntry && i === crewData.length - 1;
+    return `<div class="crew-member${isLast ? ' new-entry' : ''}" id="cm-${idSafe}" style="position:relative">
+      ${deleteMode ? `<div class="crew-del-btn" onclick="deleteCrew(${i})">✕</div>` : ''}
+      <div class="crew-avatar" style="background:linear-gradient(135deg,${p[0]},${p[1]});box-shadow:0 0 10px ${sh};width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;letter-spacing:.5px">${initials}</div>
+      <div><div class="crew-name">${c.name}</div><div class="crew-role">${c.tag}</div></div>
+    </div>`;
+  }).join('');
+
+  if (deleteMode) grid.classList.add('delete-mode');
+  else grid.classList.remove('delete-mode');
+
+  // Sync challenge dropdown
+  syncChallengeDropdown();
+}
+
+function syncChallengeDropdown() {
+  const sel = document.getElementById('name-input');
+  if (!sel) return;
+  const current = sel.value;
+  while (sel.options.length > 1) sel.remove(1);
+  crewData.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.name;
+    opt.textContent = `${c.name} · ${c.tag}`;
+    sel.appendChild(opt);
+  });
+  // Restore selection if still valid
+  for (let i = 0; i < sel.options.length; i++) {
+    if (sel.options[i].value === current) { sel.selectedIndex = i; return; }
+  }
+}
+
+function openAddCrew() {
+  if (crewData.length >= MAX_CREW) {
+    // Flash the button to indicate limit
+    const btn = document.getElementById('btn-add-crew');
+    btn.style.borderColor = '#ef4444'; btn.style.color = '#ef4444';
+    setTimeout(() => { btn.style.borderColor = ''; btn.style.color = ''; }, 800);
+    return;
+  }
+  if (deleteMode) toggleDeleteMode();
+  const input = document.getElementById('add-crew-input');
+  input.value = '';
+  input.style.borderColor = 'rgba(0,229,255,0.3)';
+  document.getElementById('add-crew-preview').textContent = '';
+  document.getElementById('overlay-add-crew').style.display = 'flex';
+  setTimeout(() => input.focus(), 100);
+}
+
+function closeAddCrew() {
+  document.getElementById('overlay-add-crew').style.display = 'none';
+}
+
+// Live preview tag as user types
+document.addEventListener('DOMContentLoaded', () => {});
+function setupAddCrewInput() {
+  const input = document.getElementById('add-crew-input');
+  if (!input) return;
+  input.addEventListener('input', () => {
+    const val = input.value.trim();
+    if (val.length > 0) {
+      const { tag } = getNextTag();
+      document.getElementById('add-crew-preview').textContent = `Tag: "${tag}"`;
+    } else {
+      document.getElementById('add-crew-preview').textContent = '';
+    }
+  });
+}
+
+async function confirmAddCrew() {
+  if (crewData.length >= MAX_CREW) { closeAddCrew(); return; }
+  const input = document.getElementById('add-crew-input');
+  const name = input.value.trim();
+  if (!name) { input.style.borderColor = '#ef4444'; return; }
+  // Check duplicate name
+  if (crewData.some(c => c.name.toLowerCase() === name.toLowerCase())) {
+    input.style.borderColor = '#f59e0b';
+    document.getElementById('add-crew-preview').textContent = 'Name already in crew!';
+    return;
+  }
+  const { tag, idx } = getNextTag();
+  if (idx >= 0) usedTagIndices.add(idx);
+  const paletteIdx = getNextPaletteIdx();
+  crewData.push({ name, tag, paletteIdx });
+  closeAddCrew();
+  renderCrew(true);
+  await saveCrewData();
+  loadHomeLeader();
+}
+
+function toggleDeleteMode() {
+  deleteMode = !deleteMode;
+  const btn = document.getElementById('btn-del-crew');
+  if (deleteMode) btn.classList.add('active');
+  else btn.classList.remove('active');
+  renderCrew();
+}
+
+async function deleteCrew(idx) {
+  const removed = crewData.splice(idx, 1)[0];
+  const tagIdx = CREW_TAGS.indexOf(removed.tag);
+  if (tagIdx >= 0) usedTagIndices.delete(tagIdx);
+  const savedRider = localStorage.getItem('rider_name');
+  if (savedRider === removed.name) localStorage.removeItem('rider_name');
+  renderCrew();
+  if (crewData.length === 0) { deleteMode = false; document.getElementById('btn-del-crew').classList.remove('active'); }
+  await saveCrewData();
+  loadHomeLeader();
+}
+
+// Init crew — show cached version instantly, then load from Firestore
+try {
+  const cached = localStorage.getItem('nozawa_crew_cache');
+  if (cached) { applyCrewData(JSON.parse(cached)); }
+} catch(e) {}
+loadCrewData(); // async — fetches from Firestore and starts live listener
+setupAddCrewInput();
+
 // ── Countdown ──
 function updateCountdown() {
   const diff = new Date('2027-01-23T00:00:00+09:00') - new Date();
@@ -447,7 +724,6 @@ let signalTimer = null;
 let challengeInited = false;
 
 function initChallenge() {
-  if (challengeInited) return;
   challengeInited = true;
   const name = localStorage.getItem('rider_name');
   if (!name) {
@@ -455,7 +731,6 @@ function initChallenge() {
   } else {
     document.getElementById('player-tag').textContent = 'Rider: ' + name;
     document.getElementById('idle-msg').textContent = 'Tap to Start';
-    // Pre-select the saved name in dropdown
     const sel = document.getElementById('name-input');
     for (let i = 0; i < sel.options.length; i++) {
       if (sel.options[i].value === name) { sel.selectedIndex = i; break; }
@@ -469,9 +744,25 @@ function confirmName() {
   localStorage.setItem('rider_name', val);
   hideOverlay('overlay-name');
   document.getElementById('player-tag').textContent = 'Rider: ' + val;
+  document.getElementById('idle-msg').textContent = 'Tap to Start';
 }
 
-// No keydown listener needed for select — remove old one
+function changeRider() {
+  // Reset game state first
+  clearTimeout(waitTimer); clearTimeout(signalTimer);
+  gameState = 'idle'; currentRound = 0; scores = [];
+  setState('idle'); updateScoreStrip();
+  setArenaColor('default');
+  // Pre-select current name
+  const name = localStorage.getItem('rider_name');
+  const sel = document.getElementById('name-input');
+  for (let i = 0; i < sel.options.length; i++) {
+    if (sel.options[i].value === name) { sel.selectedIndex = i; break; }
+  }
+  showOverlay('overlay-name');
+}
+
+
 
 function loadHomeLeader() {
   if (!window.fbGetLeaderboard) {
@@ -488,7 +779,7 @@ function loadHomeLeader() {
   window.fbGetLeaderboard().then(rows => {
     if (!rows || !rows.length) return;
     const leaderName = rows[0].name;
-    const box = document.getElementById('cm-' + leaderName);
+    const box = document.getElementById('cm-' + leaderName.replace(/ /g, '_'));
     if (!box) return;
     // Highlight the box subtly
     box.style.border = '1px solid rgba(251,191,36,0.45)';
@@ -551,9 +842,11 @@ function updateDots() {
 function updateScoreStrip() {
   const strip = document.getElementById('score-strip');
   strip.innerHTML = scores.map((s,i) => {
-    const cls = s===null?'':'  '+(s<200?'perfect':'good');
-    const label = s===null?'—':(s+'ms');
-    return `<div class="score-chip${cls}">${label}</div>`;
+    if (s === null) return `<div class="score-chip">—</div>`;
+    if (s === 0)   return `<div class="score-chip good">✓</div>`;
+    if (s === 999) return `<div class="score-chip" style="color:#ef4444;border-color:rgba(239,68,68,0.3)">✗</div>`;
+    const cls = s < 200 ? 'perfect' : 'good';
+    return `<div class="score-chip ${cls}">${s}ms</div>`;
   }).join('');
 }
 
