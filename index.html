@@ -48,7 +48,7 @@ body{display:flex;flex-direction:column}
 .cnt-lbl{font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:5px}
 .cnt-box.seconds{border-color:rgba(0,229,255,0.25);box-shadow:inset 0 0 12px rgba(0,229,255,0.05)}
 .crew-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:2px}
-.crew-member{display:flex;align-items:center;gap:10px;background:rgba(0,229,255,0.04);border:1px solid rgba(0,229,255,0.10);border-radius:12px;padding:10px 12px}
+.crew-member{display:flex;align-items:center;gap:10px;background:rgba(0,229,255,0.04);border:1px solid rgba(0,229,255,0.10);border-radius:12px;padding:10px 12px;position:relative;overflow:visible}
 .crew-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;letter-spacing:.5px}
 .av-1{background:linear-gradient(135deg,#1e40af,#2979ff);box-shadow:0 0 10px rgba(41,121,255,0.5)}
 .av-2{background:linear-gradient(135deg,#0f766e,#7c3aed);box-shadow:0 0 10px rgba(124,77,255,0.45)}
@@ -168,24 +168,16 @@ body{display:flex;flex-direction:column}
       <div class="card">
         <div class="card-label">👥 The Crew · 10 Riders</div>
         <div class="crew-grid">
-          <div class="crew-member"><div class="crew-avatar av-1">JO</div><div><div class="crew-name">Jon</div><div class="crew-role">The Instigator</div></div></div>
-          <div class="crew-member"><div class="crew-avatar av-2">YY</div><div><div class="crew-name">YY</div><div class="crew-role">Powder Gremlin</div></div></div>
-          <div class="crew-member"><div class="crew-avatar av-3">HU</div><div><div class="crew-name">Hun</div><div class="crew-role">Send It Hun</div></div></div>
-          <div class="crew-member"><div class="crew-avatar av-4">EM</div><div><div class="crew-name">Emily</div><div class="crew-role">Chairlift DJ</div></div></div>
-          <div class="crew-member"><div class="crew-avatar av-5">MK</div><div><div class="crew-name">Mark</div><div class="crew-role">Slope Goblin</div></div></div>
-          <div class="crew-member"><div class="crew-avatar av-6">LY</div><div><div class="crew-name">Lynette</div><div class="crew-role">Mogul Menace</div></div></div>
-          <div class="crew-member"><div class="crew-avatar av-7">JN</div><div><div class="crew-name">Jan</div><div class="crew-role">Backside Jan</div></div></div>
-          <div class="crew-member"><div class="crew-avatar av-8">GV</div><div><div class="crew-name">Galvin</div><div class="crew-role">Wipeout King</div></div></div>
-          <div class="crew-member"><div class="crew-avatar av-9">WR</div><div><div class="crew-name">Weirong</div><div class="crew-role">Japow Hunter</div></div></div>
-          <div class="crew-member"><div class="crew-avatar av-10">HX</div><div><div class="crew-name">Hui Xian</div><div class="crew-role">Après Queen</div></div></div>
-        </div>
-      </div>
-
-      <!-- Challenge Leader -->
-      <div class="card" style="padding:14px 16px">
-        <div class="card-label">👑 Challenge Leader</div>
-        <div id="home-leader" style="display:flex;align-items:center;gap:14px;padding:6px 0">
-          <div style="text-align:center;color:var(--muted);font-size:12px;width:100%">Loading leaderboard...</div>
+          <div class="crew-member" id="cm-Jon"><div class="crew-avatar av-1">JO</div><div><div class="crew-name">Jon</div><div class="crew-role">The Instigator</div></div></div>
+          <div class="crew-member" id="cm-YY"><div class="crew-avatar av-2">YY</div><div><div class="crew-name">YY</div><div class="crew-role">Powder Gremlin</div></div></div>
+          <div class="crew-member" id="cm-Hun"><div class="crew-avatar av-3">HU</div><div><div class="crew-name">Hun</div><div class="crew-role">Send It Hun</div></div></div>
+          <div class="crew-member" id="cm-Emily"><div class="crew-avatar av-4">EM</div><div><div class="crew-name">Emily</div><div class="crew-role">Chairlift DJ</div></div></div>
+          <div class="crew-member" id="cm-Mark"><div class="crew-avatar av-5">MK</div><div><div class="crew-name">Mark</div><div class="crew-role">Slope Goblin</div></div></div>
+          <div class="crew-member" id="cm-Lynette"><div class="crew-avatar av-6">LY</div><div><div class="crew-name">Lynette</div><div class="crew-role">Mogul Menace</div></div></div>
+          <div class="crew-member" id="cm-Jan"><div class="crew-avatar av-7">JN</div><div><div class="crew-name">Jan</div><div class="crew-role">Backside Jan</div></div></div>
+          <div class="crew-member" id="cm-Galvin"><div class="crew-avatar av-8">GV</div><div><div class="crew-name">Galvin</div><div class="crew-role">Wipeout King</div></div></div>
+          <div class="crew-member" id="cm-Weirong"><div class="crew-avatar av-9">WR</div><div><div class="crew-name">Weirong</div><div class="crew-role">Japow Hunter</div></div></div>
+          <div class="crew-member" id="cm-Hui Xian"><div class="crew-avatar av-10">HX</div><div><div class="crew-name">Hui Xian</div><div class="crew-role">Après Queen</div></div></div>
         </div>
       </div>
       <div class="card">
@@ -482,43 +474,32 @@ function confirmName() {
 // No keydown listener needed for select — remove old one
 
 function loadHomeLeader() {
-  const el = document.getElementById('home-leader');
-  if (!el) return;
   if (!window.fbGetLeaderboard) {
-    // retry after firebase loads
     setTimeout(loadHomeLeader, 1200);
     return;
   }
-  window.fbGetLeaderboard().then(rows => {
-    if (!rows || !rows.length) {
-      el.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:12px;width:100%">No scores yet — be the first! ⚡</div>';
-      return;
-    }
-    const leader = rows[0];
-    const crewMap = {
-      'Jon':{'av':'av-1','initials':'JO'},'YY':{'av':'av-2','initials':'YY'},
-      'Hun':{'av':'av-3','initials':'HU'},'Emily':{'av':'av-4','initials':'EM'},
-      'Mark':{'av':'av-5','initials':'MK'},'Lynette':{'av':'av-6','initials':'LY'},
-      'Jan':{'av':'av-7','initials':'JN'},'Galvin':{'av':'av-8','initials':'GV'},
-      'Weirong':{'av':'av-9','initials':'WR'},'Hui Xian':{'av':'av-10','initials':'HX'}
-    };
-    const info = crewMap[leader.name] || {av:'av-1', initials: leader.name.slice(0,2).toUpperCase()};
-    el.innerHTML = `
-      <div style="position:relative;flex-shrink:0">
-        <div style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:16px;filter:drop-shadow(0 0 6px gold)">👑</div>
-        <div class="crew-avatar ${info.av}" style="width:44px;height:44px;font-size:12px">${info.initials}</div>
-      </div>
-      <div style="flex:1">
-        <div style="font-size:15px;font-weight:800;color:var(--cyan)">${leader.name}</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:2px;letter-spacing:.5px">Current Champion</div>
-      </div>
-      <div style="text-align:right">
-        <div style="font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;background:linear-gradient(180deg,#fbbf24,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1">${leader.score}</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:2px">ms avg</div>
-      </div>`;
-  }).catch(() => {
-    el.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:12px;width:100%">Could not load scores</div>';
+  // Clear any existing crowns first
+  document.querySelectorAll('.leader-crown').forEach(el => el.remove());
+  document.querySelectorAll('.crew-member').forEach(el => {
+    el.style.border = '1px solid rgba(0,229,255,0.10)';
+    el.style.background = 'rgba(0,229,255,0.04)';
   });
+
+  window.fbGetLeaderboard().then(rows => {
+    if (!rows || !rows.length) return;
+    const leaderName = rows[0].name;
+    const box = document.getElementById('cm-' + leaderName);
+    if (!box) return;
+    // Highlight the box subtly
+    box.style.border = '1px solid rgba(251,191,36,0.45)';
+    box.style.background = 'rgba(251,191,36,0.05)';
+    // Inject crown
+    const crown = document.createElement('div');
+    crown.className = 'leader-crown';
+    crown.textContent = '👑';
+    crown.style.cssText = 'position:absolute;top:-11px;left:8px;font-size:14px;line-height:1;filter:drop-shadow(0 0 4px rgba(251,191,36,0.8));pointer-events:none;z-index:5';
+    box.appendChild(crown);
+  }).catch(() => {});
 }
 // Load leader on page ready, retry until Firebase is available
 loadHomeLeader();
