@@ -8,362 +8,125 @@
 <meta name="apple-mobile-web-app-title" content="Nozawa 2027">
 <meta name="theme-color" content="#050b18">
 <meta name="description" content="Nozawa & Madarao Snowboard Trip Jan 2027">
-
-<!-- PWA Manifest inline -->
-<link rel="manifest" href="data:application/json,%7B%22name%22%3A%22Nozawa%20%26%20Madarao%202027%22%2C%22short_name%22%3A%22Nozawa%202027%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23050b18%22%2C%22theme_color%22%3A%22%23050b18%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%3D%2527http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%2527%2520viewBox%3D%25270%25200%2520512%2520512%2527%253E%253Crect%2520width%3D%2527512%2527%2520height%3D%2527512%2527%2520fill%3D%2527%2523050b18%2527%252F%253E%253Ctext%2520x%3D%2527256%2527%2520y%3D%2527320%2527%2520text-anchor%3D%2527middle%2527%2520font-size%3D%2527260%2527%253E%25F0%259F%258F%2594%253C%2F%2527text%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
-
-<!-- Apple touch icon (inline SVG as data URI) -->
+<link rel="manifest" href="data:application/json,%7B%22name%22%3A%22Nozawa%20%26%20Madarao%202027%22%2C%22short_name%22%3A%22Nozawa%202027%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23050b18%22%2C%22theme_color%22%3A%22%23050b18%22%7D">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%23050b18'/><text x='256' y='320' text-anchor='middle' font-size='280'>🏔</text></svg>">
-
 <title>Nozawa &amp; Madarao 2027</title>
-
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-:root {
-  --cyan: #00e5ff;
-  --blue: #2979ff;
-  --purple: #7c4dff;
-  --violet: #a78bfa;
-  --green: #4ade80;
-  --bg: #050b18;
-  --bg2: #0a1628;
-  --bg3: #0f1f3a;
-  --text: #e8f4ff;
-  --muted: #5a7a9a;
-  --card: rgba(10,30,60,0.75);
-  --border: rgba(0,229,255,0.15);
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --cyan:#00e5ff;--blue:#2979ff;--purple:#7c4dff;--violet:#a78bfa;--green:#4ade80;
+  --bg:#050b18;--text:#e8f4ff;--muted:#5a7a9a;
+  --card:rgba(10,30,60,0.75);--border:rgba(0,229,255,0.15);
 }
-
-html, body {
-  height: 100%;
-  overflow: hidden;
-  background: var(--bg);
-  color: var(--text);
-  font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
-}
-
-body { display: flex; flex-direction: column; }
-
-/* ── Animated Background ── */
-.bg-canvas {
-  position: fixed; inset: 0; z-index: 0; overflow: hidden;
-  background: radial-gradient(ellipse at 80% 10%, rgba(41,121,255,0.08) 0%, transparent 50%),
-              radial-gradient(ellipse at 10% 80%, rgba(124,77,255,0.08) 0%, transparent 50%),
-              var(--bg);
-}
-.grid-line { position: absolute; background: rgba(0,229,255,0.04); }
-.grid-h { width: 100%; height: 1px; }
-.grid-v { height: 100%; width: 1px; }
-.orb {
-  position: absolute; border-radius: 50%;
-  filter: blur(60px);
-  animation: pulse-orb 8s ease-in-out infinite;
-}
-.orb1 { width: 220px; height: 220px; background: rgba(41,121,255,0.13); top: -80px; right: -60px; animation-delay: 0s; }
-.orb2 { width: 160px; height: 160px; background: rgba(124,77,255,0.10); bottom: 100px; left: -50px; animation-delay: 4s; }
-.orb3 { width: 120px; height: 120px; background: rgba(0,229,255,0.07); top: 40%; right: -30px; animation-delay: 2s; }
-
-@keyframes pulse-orb {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.12); }
-}
-
-/* Scanline effect */
-.scanlines {
-  position: fixed; inset: 0; z-index: 1; pointer-events: none;
-  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
-}
-
-/* ── Header ── */
-.header {
-  position: relative; z-index: 10;
-  padding: 16px 20px 12px;
-  border-bottom: 1px solid var(--border);
-  background: rgba(5,11,24,0.88);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  display: flex; align-items: center; justify-content: space-between;
-}
-.header-left {}
-.header h1 {
-  font-size: 18px; font-weight: 800;
-  letter-spacing: 2px; text-transform: uppercase;
-  background: linear-gradient(90deg, var(--cyan) 0%, var(--blue) 60%, var(--violet) 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-.header p { font-size: 10px; color: var(--muted); letter-spacing: 1.5px; margin-top: 3px; text-transform: uppercase; }
-.header-icon { font-size: 28px; opacity: 0.8; }
-
-/* ── Tab Bar ── */
-.tabbar {
-  position: relative; z-index: 10;
-  display: flex;
-  background: rgba(5,11,24,0.92);
-  border-bottom: 1px solid var(--border);
-}
-.tab {
-  flex: 1; padding: 12px 0 10px;
-  text-align: center;
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 2px; text-transform: uppercase;
-  color: var(--muted); cursor: pointer;
-  transition: color 0.2s;
-  position: relative;
-  user-select: none;
-}
-.tab.active { color: var(--cyan); }
-.tab.active::after {
-  content: '';
-  position: absolute; bottom: 0; left: 15%; right: 15%; height: 2px;
-  background: var(--cyan);
-  box-shadow: 0 0 10px var(--cyan), 0 0 20px rgba(0,229,255,0.4);
-  border-radius: 2px;
-}
-
-/* ── Swipeable Content ── */
-.viewport { flex: 1; overflow: hidden; position: relative; z-index: 5; }
-.slides {
-  display: flex; height: 100%;
-  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform;
-}
-.slide {
-  min-width: 100%; height: 100%;
-  overflow-y: auto; overflow-x: hidden;
-  padding: 18px 16px 60px;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* ── Cards ── */
-.card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 18px;
-  margin-bottom: 14px;
-  position: relative;
-  overflow: hidden;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-.card::before {
-  content: '';
-  position: absolute; inset: 0; border-radius: 16px;
-  padding: 1px;
-  background: linear-gradient(135deg, rgba(0,229,255,0.18), transparent 40%, rgba(41,121,255,0.12));
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
-.card-label {
-  font-size: 9px; letter-spacing: 2.5px;
-  text-transform: uppercase; color: var(--muted);
-  margin-bottom: 12px;
-}
-
-/* ── Countdown ── */
-.countdown-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
-  margin-top: 2px;
-}
-.cnt-box {
-  background: rgba(0,229,255,0.04);
-  border: 1px solid rgba(0,229,255,0.12);
-  border-radius: 12px;
-  padding: 14px 4px;
-  text-align: center;
-}
-.cnt-val {
-  font-size: 30px; font-weight: 800;
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-  background: linear-gradient(180deg, #ffffff 20%, var(--cyan) 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-shadow: none;
-}
-.cnt-lbl {
-  font-size: 8px; letter-spacing: 2px;
-  color: var(--muted); text-transform: uppercase;
-  margin-top: 5px;
-}
-
-/* Glow pulse on seconds box */
-.cnt-box.seconds {
-  border-color: rgba(0,229,255,0.25);
-  box-shadow: inset 0 0 12px rgba(0,229,255,0.05);
-}
-
-/* ── Crew ── */
-.crew-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 2px;
-}
-.crew-member {
-  display: flex; align-items: center; gap: 10px;
-  background: rgba(0,229,255,0.04);
-  border: 1px solid rgba(0,229,255,0.10);
-  border-radius: 12px; padding: 10px 12px;
-}
-.crew-avatar {
-  width: 38px; height: 38px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 800; color: #fff;
-  flex-shrink: 0; letter-spacing: 0.5px;
-}
-.av-1  { background: linear-gradient(135deg, #1e40af, #2979ff); box-shadow: 0 0 10px rgba(41,121,255,0.5); }
-.av-2  { background: linear-gradient(135deg, #0f766e, #7c3aed); box-shadow: 0 0 10px rgba(124,77,255,0.45); }
-.av-3  { background: linear-gradient(135deg, #92400e, #d97706); box-shadow: 0 0 10px rgba(217,119,6,0.45); }
-.av-4  { background: linear-gradient(135deg, #831843, #db2777); box-shadow: 0 0 10px rgba(219,39,119,0.45); }
-.av-5  { background: linear-gradient(135deg, #134e4a, #0d9488); box-shadow: 0 0 10px rgba(13,148,136,0.45); }
-.av-6  { background: linear-gradient(135deg, #3b0764, #9333ea); box-shadow: 0 0 10px rgba(147,51,234,0.45); }
-.av-7  { background: linear-gradient(135deg, #1c1917, #ef4444); box-shadow: 0 0 10px rgba(239,68,68,0.45); }
-.av-8  { background: linear-gradient(135deg, #064e3b, #10b981); box-shadow: 0 0 10px rgba(16,185,129,0.45); }
-.av-9  { background: linear-gradient(135deg, #1e3a5f, #06b6d4); box-shadow: 0 0 10px rgba(6,182,212,0.45); }
-.av-10 { background: linear-gradient(135deg, #4a044e, #e879f9); box-shadow: 0 0 10px rgba(232,121,249,0.45); }
-.crew-name { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.2; }
-.crew-role { font-size: 9px; color: var(--muted); margin-top: 2px; letter-spacing: 0.5px; }
-
-/* ── Trip Summary Tiles ── */
-.summary-grid {
-  display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; margin-top: 4px;
-}
-.summary-tile {
-  background: rgba(0,229,255,0.04);
-  border: 1px solid rgba(0,229,255,0.10);
-  border-radius: 10px; padding: 10px 6px;
-  text-align: center;
-}
-.summary-tile-lbl { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
-.summary-tile-val { font-size: 20px; font-weight: 800; color: var(--cyan); line-height: 1; }
-.summary-tile-sub { font-size: 9px; color: var(--muted); margin-top: 3px; }
-
-/* ── Trip Stats (kept for weather tab) ── */
-.trip-stat {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 9px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
-}
-.trip-stat:last-child { border-bottom: none; padding-bottom: 0; }
-.trip-stat-label { font-size: 11px; color: var(--muted); }
-.trip-stat-val { font-size: 12px; font-weight: 600; color: var(--cyan); }
-
-/* ── Itinerary Timeline ── */
-.timeline { position: relative; padding-left: 24px; }
-.timeline::before {
-  content: '';
-  position: absolute; left: 7px; top: 8px; bottom: 8px;
-  width: 2px;
-  background: linear-gradient(180deg, var(--cyan) 0%, var(--blue) 40%, var(--violet) 75%, var(--green) 100%);
-  border-radius: 2px;
-  box-shadow: 0 0 8px rgba(0,229,255,0.3);
-}
-.tl-item { position: relative; margin-bottom: 18px; }
-.tl-item:last-child { margin-bottom: 0; }
-.tl-dot {
-  position: absolute; left: -21px; top: 4px;
-  width: 12px; height: 12px; border-radius: 50%;
-  background: var(--bg); border: 2px solid var(--cyan);
-  box-shadow: 0 0 8px var(--cyan), 0 0 16px rgba(0,229,255,0.3);
-}
-.tl-dot.d-purple { border-color: var(--violet); box-shadow: 0 0 8px var(--violet), 0 0 16px rgba(167,139,250,0.3); }
-.tl-dot.d-green  { border-color: var(--green);  box-shadow: 0 0 8px var(--green),  0 0 16px rgba(74,222,128,0.3); }
-.tl-dot.d-ski    { border-color: #60a5fa; box-shadow: 0 0 8px #60a5fa, 0 0 16px rgba(96,165,250,0.3); }
-
-.tl-date { font-size: 9px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 3px; }
-.tl-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 2px; line-height: 1.3; }
-.tl-sub { font-size: 11px; color: var(--muted); }
-.tl-badge {
-  display: inline-block;
-  font-size: 8px; font-weight: 800;
-  letter-spacing: 1.5px; text-transform: uppercase;
-  padding: 3px 8px; border-radius: 5px; margin-top: 5px;
-}
-.badge-fly    { background: rgba(0,229,255,0.08); color: var(--cyan); border: 1px solid rgba(0,229,255,0.2); }
-.badge-ski    { background: rgba(96,165,250,0.08); color: #60a5fa; border: 1px solid rgba(96,165,250,0.2); }
-.badge-travel { background: rgba(167,139,250,0.08); color: var(--violet); border: 1px solid rgba(167,139,250,0.2); }
-.badge-home   { background: rgba(74,222,128,0.08); color: var(--green); border: 1px solid rgba(74,222,128,0.2); }
-
-/* ── Weather ── */
-.resort-header {
-  display: flex; align-items: flex-start; justify-content: space-between;
-  margin-bottom: 14px;
-}
-.resort-name { font-size: 22px; font-weight: 800; line-height: 1; }
-.resort-name.rn-nozawa {
-  color: var(--cyan);
-  text-shadow: 0 0 16px rgba(0,229,255,0.45);
-}
-.resort-name.rn-madarao {
-  color: var(--violet);
-  text-shadow: 0 0 16px rgba(167,139,250,0.45);
-}
-.resort-elev {
-  font-size: 10px; font-weight: 700; letter-spacing: 1px;
-  padding: 4px 10px; border-radius: 20px; margin-top: 2px;
-}
-.elev-n { background: rgba(0,229,255,0.1); color: var(--cyan); border: 1px solid rgba(0,229,255,0.2); }
-.elev-m { background: rgba(167,139,250,0.1); color: var(--violet); border: 1px solid rgba(167,139,250,0.2); }
-.resort-country { font-size: 10px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px; }
-.btn-row { display: flex; gap: 10px; }
-.wx-btn {
-  flex: 1; padding: 13px 8px;
-  border-radius: 10px; border: 1px solid;
-  font-size: 10px; font-weight: 800;
-  letter-spacing: 1.5px; text-transform: uppercase;
-  text-align: center; cursor: pointer;
-  text-decoration: none; display: block;
-  transition: all 0.2s;
-}
-.wx-btn.b-weather {
-  border-color: rgba(0,229,255,0.35); color: var(--cyan);
-  background: rgba(0,229,255,0.06);
-}
-.wx-btn.b-weather:active { background: rgba(0,229,255,0.15); }
-.wx-btn.b-snow {
-  border-color: rgba(167,139,250,0.35); color: var(--violet);
-  background: rgba(124,77,255,0.06);
-}
-.wx-btn.b-snow:active { background: rgba(124,77,255,0.15); }
-.wx-btn.b-weather-m { border-color: rgba(167,139,250,0.35); color: var(--violet); background: rgba(124,77,255,0.06); }
-.wx-btn.b-weather-m:active { background: rgba(124,77,255,0.15); }
-.wx-btn.b-snow-m { border-color: rgba(96,165,250,0.35); color: #60a5fa; background: rgba(96,165,250,0.06); }
-.wx-btn.b-snow-m:active { background: rgba(96,165,250,0.15); }
-
-.resort-divider { height: 1px; background: var(--border); margin: 4px 0 16px; }
-
-/* ── Snowflakes ── */
-.snowflake {
-  position: fixed; top: -20px; pointer-events: none; z-index: 2;
-  color: rgba(0,229,255,0.3); font-size: 12px;
-  animation: fall linear infinite;
-}
-@keyframes fall {
-  0% { transform: translateY(-20px) rotate(0deg); opacity: 0.8; }
-  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
-}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:-apple-system,'SF Pro Display','Helvetica Neue',sans-serif}
+body{display:flex;flex-direction:column}
+.bg-canvas{position:fixed;inset:0;z-index:0;overflow:hidden;background:radial-gradient(ellipse at 80% 10%,rgba(41,121,255,0.08) 0%,transparent 50%),radial-gradient(ellipse at 10% 80%,rgba(124,77,255,0.08) 0%,transparent 50%),var(--bg)}
+.grid-line{position:absolute;background:rgba(0,229,255,0.04)}.grid-h{width:100%;height:1px}.grid-v{height:100%;width:1px}
+.orb{position:absolute;border-radius:50%;filter:blur(60px);animation:pulse-orb 8s ease-in-out infinite}
+.orb1{width:220px;height:220px;background:rgba(41,121,255,0.13);top:-80px;right:-60px}
+.orb2{width:160px;height:160px;background:rgba(124,77,255,0.10);bottom:100px;left:-50px;animation-delay:4s}
+.orb3{width:120px;height:120px;background:rgba(0,229,255,0.07);top:40%;right:-30px;animation-delay:2s}
+@keyframes pulse-orb{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.12)}}
+.scanlines{position:fixed;inset:0;z-index:1;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px)}
+.header{position:relative;z-index:10;padding:16px 20px 12px;border-bottom:1px solid var(--border);background:rgba(5,11,24,0.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between}
+.header h1{font-size:18px;font-weight:800;letter-spacing:2px;text-transform:uppercase;background:linear-gradient(90deg,var(--cyan) 0%,var(--blue) 60%,var(--violet) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.header p{font-size:10px;color:var(--muted);letter-spacing:1.5px;margin-top:3px;text-transform:uppercase}
+.header-icon{font-size:28px;opacity:.8}
+.tabbar{position:relative;z-index:10;display:flex;background:rgba(5,11,24,0.92);border-bottom:1px solid var(--border)}
+.tab{flex:1;padding:11px 0 9px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:color .2s;position:relative;user-select:none}
+.tab.active{color:var(--cyan)}
+.tab.active::after{content:'';position:absolute;bottom:0;left:15%;right:15%;height:2px;background:var(--cyan);box-shadow:0 0 10px var(--cyan),0 0 20px rgba(0,229,255,0.4);border-radius:2px}
+.viewport{flex:1;overflow:hidden;position:relative;z-index:5}
+.slides{display:flex;height:100%;transition:transform .35s cubic-bezier(.4,0,.2,1);will-change:transform}
+.slide{min-width:100%;height:100%;overflow-y:auto;overflow-x:hidden;padding:18px 16px 60px;-webkit-overflow-scrolling:touch}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:14px;position:relative;overflow:hidden;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.card::before{content:'';position:absolute;inset:0;border-radius:16px;padding:1px;background:linear-gradient(135deg,rgba(0,229,255,0.18),transparent 40%,rgba(41,121,255,0.12));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+.card-label{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.countdown-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:2px}
+.cnt-box{background:rgba(0,229,255,0.04);border:1px solid rgba(0,229,255,0.12);border-radius:12px;padding:14px 4px;text-align:center}
+.cnt-val{font-size:30px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1;background:linear-gradient(180deg,#fff 20%,var(--cyan) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.cnt-lbl{font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:5px}
+.cnt-box.seconds{border-color:rgba(0,229,255,0.25);box-shadow:inset 0 0 12px rgba(0,229,255,0.05)}
+.crew-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:2px}
+.crew-member{display:flex;align-items:center;gap:10px;background:rgba(0,229,255,0.04);border:1px solid rgba(0,229,255,0.10);border-radius:12px;padding:10px 12px}
+.crew-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;letter-spacing:.5px}
+.av-1{background:linear-gradient(135deg,#1e40af,#2979ff);box-shadow:0 0 10px rgba(41,121,255,0.5)}
+.av-2{background:linear-gradient(135deg,#0f766e,#7c3aed);box-shadow:0 0 10px rgba(124,77,255,0.45)}
+.av-3{background:linear-gradient(135deg,#92400e,#d97706);box-shadow:0 0 10px rgba(217,119,6,0.45)}
+.av-4{background:linear-gradient(135deg,#831843,#db2777);box-shadow:0 0 10px rgba(219,39,119,0.45)}
+.av-5{background:linear-gradient(135deg,#134e4a,#0d9488);box-shadow:0 0 10px rgba(13,148,136,0.45)}
+.av-6{background:linear-gradient(135deg,#3b0764,#9333ea);box-shadow:0 0 10px rgba(147,51,234,0.45)}
+.av-7{background:linear-gradient(135deg,#1c1917,#ef4444);box-shadow:0 0 10px rgba(239,68,68,0.45)}
+.av-8{background:linear-gradient(135deg,#064e3b,#10b981);box-shadow:0 0 10px rgba(16,185,129,0.45)}
+.av-9{background:linear-gradient(135deg,#1e3a5f,#06b6d4);box-shadow:0 0 10px rgba(6,182,212,0.45)}
+.av-10{background:linear-gradient(135deg,#4a044e,#e879f9);box-shadow:0 0 10px rgba(232,121,249,0.45)}
+.crew-name{font-size:13px;font-weight:700;color:var(--text);line-height:1.2}
+.crew-role{font-size:9px;color:var(--muted);margin-top:2px;letter-spacing:.5px}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-top:4px}
+.summary-tile{background:rgba(0,229,255,0.04);border:1px solid rgba(0,229,255,0.10);border-radius:10px;padding:10px 6px;text-align:center}
+.summary-tile-lbl{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.summary-tile-val{font-size:20px;font-weight:800;color:var(--cyan);line-height:1}
+.summary-tile-sub{font-size:9px;color:var(--muted);margin-top:3px}
+.trip-stat{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+.trip-stat:last-child{border-bottom:none;padding-bottom:0}
+.trip-stat-label{font-size:11px;color:var(--muted)}
+.trip-stat-val{font-size:12px;font-weight:600;color:var(--cyan)}
+.timeline{position:relative;padding-left:24px}
+.timeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:linear-gradient(180deg,var(--cyan) 0%,var(--blue) 40%,var(--violet) 75%,var(--green) 100%);border-radius:2px;box-shadow:0 0 8px rgba(0,229,255,0.3)}
+.tl-item{position:relative;margin-bottom:18px}
+.tl-item:last-child{margin-bottom:0}
+.tl-dot{position:absolute;left:-21px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid var(--cyan);box-shadow:0 0 8px var(--cyan),0 0 16px rgba(0,229,255,0.3)}
+.tl-dot.d-purple{border-color:var(--violet);box-shadow:0 0 8px var(--violet),0 0 16px rgba(167,139,250,0.3)}
+.tl-dot.d-green{border-color:var(--green);box-shadow:0 0 8px var(--green),0 0 16px rgba(74,222,128,0.3)}
+.tl-dot.d-ski{border-color:#60a5fa;box-shadow:0 0 8px #60a5fa,0 0 16px rgba(96,165,250,0.3)}
+.tl-date{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:3px}
+.tl-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;line-height:1.3}
+.tl-sub{font-size:11px;color:var(--muted)}
+.tl-badge{display:inline-block;font-size:8px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:3px 8px;border-radius:5px;margin-top:5px}
+.badge-fly{background:rgba(0,229,255,0.08);color:var(--cyan);border:1px solid rgba(0,229,255,0.2)}
+.badge-ski{background:rgba(96,165,250,0.08);color:#60a5fa;border:1px solid rgba(96,165,250,0.2)}
+.badge-travel{background:rgba(167,139,250,0.08);color:var(--violet);border:1px solid rgba(167,139,250,0.2)}
+.badge-home{background:rgba(74,222,128,0.08);color:var(--green);border:1px solid rgba(74,222,128,0.2)}
+.resort-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+.resort-name{font-size:22px;font-weight:800;line-height:1}
+.resort-name.rn-nozawa{color:var(--cyan);text-shadow:0 0 16px rgba(0,229,255,0.45)}
+.resort-name.rn-madarao{color:var(--violet);text-shadow:0 0 16px rgba(167,139,250,0.45)}
+.resort-elev{font-size:10px;font-weight:700;letter-spacing:1px;padding:4px 10px;border-radius:20px;margin-top:2px}
+.elev-n{background:rgba(0,229,255,0.1);color:var(--cyan);border:1px solid rgba(0,229,255,0.2)}
+.elev-m{background:rgba(167,139,250,0.1);color:var(--violet);border:1px solid rgba(167,139,250,0.2)}
+.resort-country{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px}
+.btn-row{display:flex;gap:10px}
+.wx-btn{flex:1;padding:13px 8px;border-radius:10px;border:1px solid;font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-align:center;cursor:pointer;text-decoration:none;display:block;transition:all .2s}
+.wx-btn.b-weather{border-color:rgba(0,229,255,0.35);color:var(--cyan);background:rgba(0,229,255,0.06)}
+.wx-btn.b-snow{border-color:rgba(167,139,250,0.35);color:var(--violet);background:rgba(124,77,255,0.06)}
+.wx-btn.b-weather-m{border-color:rgba(167,139,250,0.35);color:var(--violet);background:rgba(124,77,255,0.06)}
+.wx-btn.b-snow-m{border-color:rgba(96,165,250,0.35);color:#60a5fa;background:rgba(96,165,250,0.06)}
+.resort-divider{height:1px;background:var(--border);margin:4px 0 16px}
+.snowflake{position:fixed;top:-20px;pointer-events:none;z-index:2;color:rgba(0,229,255,0.3);font-size:12px;animation:fall linear infinite}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:.8}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+/* ── Game specific ── */
+.round-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);transition:all .3s}
+.round-dot.done{background:var(--cyan);border-color:var(--cyan);box-shadow:0 0 6px var(--cyan)}
+.round-dot.active{background:rgba(0,229,255,0.3);border-color:var(--cyan);animation:dot-pulse .6s ease-in-out infinite}
+@keyframes dot-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.3)}}
+.score-chip{padding:6px 12px;border-radius:8px;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:var(--muted);min-width:60px;text-align:center;transition:all .3s}
+.score-chip.good{color:var(--cyan);border-color:rgba(0,229,255,0.3);background:rgba(0,229,255,0.06)}
+.score-chip.perfect{color:#fbbf24;border-color:rgba(251,191,36,0.4);background:rgba(251,191,36,0.06)}
+.lb-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;margin-bottom:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);transition:all .2s}
+.lb-row.me{background:rgba(0,229,255,0.08);border-color:rgba(0,229,255,0.25)}
 </style>
 </head>
 <body>
 
-<!-- Background -->
 <div class="bg-canvas">
-  <div class="orb orb1"></div>
-  <div class="orb orb2"></div>
-  <div class="orb orb3"></div>
-  <div class="grid-line grid-h" style="top:20%"></div>
-  <div class="grid-line grid-h" style="top:40%"></div>
-  <div class="grid-line grid-h" style="top:60%"></div>
-  <div class="grid-line grid-h" style="top:80%"></div>
-  <div class="grid-line grid-v" style="left:25%"></div>
-  <div class="grid-line grid-v" style="left:50%"></div>
+  <div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+  <div class="grid-line grid-h" style="top:20%"></div><div class="grid-line grid-h" style="top:40%"></div>
+  <div class="grid-line grid-h" style="top:60%"></div><div class="grid-line grid-h" style="top:80%"></div>
+  <div class="grid-line grid-v" style="left:25%"></div><div class="grid-line grid-v" style="left:50%"></div>
   <div class="grid-line grid-v" style="left:75%"></div>
 </div>
 <div class="scanlines"></div>
 
-<!-- Header -->
 <div class="header">
   <div class="header-left">
     <h1>Nozawa &amp; Madarao</h1>
@@ -372,254 +135,102 @@ body { display: flex; flex-direction: column; }
   <div class="header-icon">🏔️</div>
 </div>
 
-<!-- Tab Bar -->
 <div class="tabbar">
   <div class="tab active" id="tab-0" onclick="goTab(0)">Home</div>
   <div class="tab" id="tab-1" onclick="goTab(1)">Itinerary</div>
   <div class="tab" id="tab-2" onclick="goTab(2)">Weather</div>
+  <div class="tab" id="tab-3" onclick="goTab(3)">⚡ Challenge</div>
 </div>
 
-<!-- Slides -->
 <div class="viewport" id="viewport">
   <div class="slides" id="slides">
 
-    <!-- ━━━ HOME ━━━ -->
+    <!-- HOME -->
     <div class="slide">
-
       <div class="card">
         <div class="card-label">🚀 Countdown to Departure</div>
         <div class="countdown-grid">
-          <div class="cnt-box">
-            <div class="cnt-val" id="cd-days">--</div>
-            <div class="cnt-lbl">Days</div>
-          </div>
-          <div class="cnt-box">
-            <div class="cnt-val" id="cd-hrs">--</div>
-            <div class="cnt-lbl">Hours</div>
-          </div>
-          <div class="cnt-box">
-            <div class="cnt-val" id="cd-min">--</div>
-            <div class="cnt-lbl">Mins</div>
-          </div>
-          <div class="cnt-box seconds">
-            <div class="cnt-val" id="cd-sec">--</div>
-            <div class="cnt-lbl">Secs</div>
-          </div>
+          <div class="cnt-box"><div class="cnt-val" id="cd-days">--</div><div class="cnt-lbl">Days</div></div>
+          <div class="cnt-box"><div class="cnt-val" id="cd-hrs">--</div><div class="cnt-lbl">Hours</div></div>
+          <div class="cnt-box"><div class="cnt-val" id="cd-min">--</div><div class="cnt-lbl">Mins</div></div>
+          <div class="cnt-box seconds"><div class="cnt-val" id="cd-sec">--</div><div class="cnt-lbl">Secs</div></div>
         </div>
       </div>
-
-      <!-- Trip Summary — compact 2x2 stat tiles -->
-      <div class="card" style="padding: 14px 16px;">
+      <div class="card" style="padding:14px 16px">
         <div class="card-label">📋 Trip Summary</div>
         <div class="summary-grid">
-          <div class="summary-tile">
-            <div class="summary-tile-lbl">Trip Start</div>
-            <div class="summary-tile-val">23 Jan</div>
-            <div class="summary-tile-sub">2027</div>
-          </div>
-          <div class="summary-tile">
-            <div class="summary-tile-lbl">Trip End</div>
-            <div class="summary-tile-val">29 Jan</div>
-            <div class="summary-tile-sub">2027</div>
-          </div>
-          <div class="summary-tile">
-            <div class="summary-tile-lbl">Duration</div>
-            <div class="summary-tile-val">7</div>
-            <div class="summary-tile-sub">Nights</div>
-          </div>
-          <div class="summary-tile">
-            <div class="summary-tile-lbl">Crew</div>
-            <div class="summary-tile-val">10</div>
-            <div class="summary-tile-sub">Riders</div>
-          </div>
+          <div class="summary-tile"><div class="summary-tile-lbl">Trip Start</div><div class="summary-tile-val">23 Jan</div><div class="summary-tile-sub">2027</div></div>
+          <div class="summary-tile"><div class="summary-tile-lbl">Trip End</div><div class="summary-tile-val">29 Jan</div><div class="summary-tile-sub">2027</div></div>
+          <div class="summary-tile"><div class="summary-tile-lbl">Duration</div><div class="summary-tile-val">7</div><div class="summary-tile-sub">Nights</div></div>
+          <div class="summary-tile"><div class="summary-tile-lbl">Crew</div><div class="summary-tile-val">10</div><div class="summary-tile-sub">Riders</div></div>
         </div>
       </div>
-
       <div class="card">
         <div class="card-label">👥 The Crew · 10 Riders</div>
         <div class="crew-grid">
-          <div class="crew-member">
-            <div class="crew-avatar av-1">JO</div>
-            <div><div class="crew-name">Jon</div><div class="crew-role">The Instigator</div></div>
-          </div>
-          <div class="crew-member">
-            <div class="crew-avatar av-2">YY</div>
-            <div><div class="crew-name">YY</div><div class="crew-role">Powder Gremlin</div></div>
-          </div>
-          <div class="crew-member">
-            <div class="crew-avatar av-3">HU</div>
-            <div><div class="crew-name">Hun</div><div class="crew-role">Send It Hun</div></div>
-          </div>
-          <div class="crew-member">
-            <div class="crew-avatar av-4">EM</div>
-            <div><div class="crew-name">Emily</div><div class="crew-role">Chairlift DJ</div></div>
-          </div>
-          <div class="crew-member">
-            <div class="crew-avatar av-5">MK</div>
-            <div><div class="crew-name">Mark</div><div class="crew-role">Slope Goblin</div></div>
-          </div>
-          <div class="crew-member">
-            <div class="crew-avatar av-6">LY</div>
-            <div><div class="crew-name">Lynette</div><div class="crew-role">Mogul Menace</div></div>
-          </div>
-          <div class="crew-member">
-            <div class="crew-avatar av-7">JN</div>
-            <div><div class="crew-name">Jan</div><div class="crew-role">Backside Jan</div></div>
-          </div>
-          <div class="crew-member">
-            <div class="crew-avatar av-8">GV</div>
-            <div><div class="crew-name">Galvin</div><div class="crew-role">Wipeout King</div></div>
-          </div>
-          <div class="crew-member">
-            <div class="crew-avatar av-9">WR</div>
-            <div><div class="crew-name">Weirong</div><div class="crew-role">Japow Hunter</div></div>
-          </div>
-          <div class="crew-member">
-            <div class="crew-avatar av-10">HX</div>
-            <div><div class="crew-name">Hui Xian</div><div class="crew-role">Après Queen</div></div>
-          </div>
+          <div class="crew-member"><div class="crew-avatar av-1">JO</div><div><div class="crew-name">Jon</div><div class="crew-role">The Instigator</div></div></div>
+          <div class="crew-member"><div class="crew-avatar av-2">YY</div><div><div class="crew-name">YY</div><div class="crew-role">Powder Gremlin</div></div></div>
+          <div class="crew-member"><div class="crew-avatar av-3">HU</div><div><div class="crew-name">Hun</div><div class="crew-role">Send It Hun</div></div></div>
+          <div class="crew-member"><div class="crew-avatar av-4">EM</div><div><div class="crew-name">Emily</div><div class="crew-role">Chairlift DJ</div></div></div>
+          <div class="crew-member"><div class="crew-avatar av-5">MK</div><div><div class="crew-name">Mark</div><div class="crew-role">Slope Goblin</div></div></div>
+          <div class="crew-member"><div class="crew-avatar av-6">LY</div><div><div class="crew-name">Lynette</div><div class="crew-role">Mogul Menace</div></div></div>
+          <div class="crew-member"><div class="crew-avatar av-7">JN</div><div><div class="crew-name">Jan</div><div class="crew-role">Backside Jan</div></div></div>
+          <div class="crew-member"><div class="crew-avatar av-8">GV</div><div><div class="crew-name">Galvin</div><div class="crew-role">Wipeout King</div></div></div>
+          <div class="crew-member"><div class="crew-avatar av-9">WR</div><div><div class="crew-name">Weirong</div><div class="crew-role">Japow Hunter</div></div></div>
+          <div class="crew-member"><div class="crew-avatar av-10">HX</div><div><div class="crew-name">Hui Xian</div><div class="crew-role">Après Queen</div></div></div>
         </div>
       </div>
-
-      <!-- Accommodation -->
       <div class="card">
         <div class="card-label">🏠 Accommodation</div>
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
           <div>
-            <div style="font-size:17px; font-weight:800; color:var(--cyan); text-shadow:0 0 14px rgba(0,229,255,0.4); line-height:1.2;">La Colina Retreat</div>
-            <div style="font-size:10px; color:var(--muted); letter-spacing:1px; margin-top:3px; text-transform:uppercase;">Nozawa Onsen · Japan</div>
+            <div style="font-size:17px;font-weight:800;color:var(--cyan);text-shadow:0 0 14px rgba(0,229,255,0.4)">La Colina Retreat</div>
+            <div style="font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:3px;text-transform:uppercase">Nozawa Onsen · Japan</div>
           </div>
-          <div style="font-size:26px; opacity:0.7;">🏡</div>
+          <div style="font-size:26px;opacity:.7">🏡</div>
         </div>
-        <div style="display:flex; gap:10px;">
-          <a href="https://lacolinaretreat.jp/en/home/" target="_blank" style="flex:1; display:block; padding:11px 8px; border-radius:10px; border:1px solid rgba(0,229,255,0.35); color:var(--cyan); background:rgba(0,229,255,0.06); font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; text-align:center; text-decoration:none;">🌐 Website</a>
-          <a href="https://maps.app.goo.gl/FwYyeXcBWYMXgaiQ9?g_st=iw" target="_blank" style="flex:1; display:block; padding:11px 8px; border-radius:10px; border:1px solid rgba(74,222,128,0.35); color:#4ade80; background:rgba(74,222,128,0.06); font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; text-align:center; text-decoration:none;">📍 Maps</a>
+        <div style="display:flex;gap:10px">
+          <a href="https://lacolinaretreat.jp/en/home/" target="_blank" style="flex:1;display:block;padding:11px 8px;border-radius:10px;border:1px solid rgba(0,229,255,0.35);color:var(--cyan);background:rgba(0,229,255,0.06);font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-align:center;text-decoration:none">🌐 Website</a>
+          <a href="https://maps.app.goo.gl/FwYyeXcBWYMXgaiQ9?g_st=iw" target="_blank" style="flex:1;display:block;padding:11px 8px;border-radius:10px;border:1px solid rgba(74,222,128,0.35);color:#4ade80;background:rgba(74,222,128,0.06);font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-align:center;text-decoration:none">📍 Maps</a>
         </div>
       </div>
-
     </div>
 
-    <!-- ━━━ ITINERARY ━━━ -->
+    <!-- ITINERARY -->
     <div class="slide">
       <div class="card">
         <div class="card-label">📅 Full Schedule</div>
-        <div style="margin-top: 8px" class="timeline">
-
-          <div class="tl-item">
-            <div class="tl-dot"></div>
-            <div class="tl-date">Thu · 21 Jan 2027</div>
-            <div class="tl-title">Crew flies Singapore → Tokyo</div>
-            <div class="tl-sub">Depart Singapore Changi (SIN)</div>
-            <span class="tl-badge badge-fly">✈ Flight</span>
-          </div>
-
-          <div class="tl-item">
-            <div class="tl-dot d-purple"></div>
-            <div class="tl-date">Fri · 22 Jan 2027</div>
-            <div class="tl-title">Arrive Tokyo · Rest &amp; Explore</div>
-            <div class="tl-sub">Shinjuku / Shibuya vibes</div>
-            <span class="tl-badge badge-travel">🗼 Tokyo</span>
-          </div>
-
-          <div class="tl-item">
-            <div class="tl-dot d-purple"></div>
-            <div class="tl-date">Sat · 23 Jan 2027</div>
-            <div class="tl-title">Transfer to Nozawa Onsen</div>
-            <div class="tl-sub">Shinkansen → Iiyama → Nozawa</div>
-            <span class="tl-badge badge-travel">🚄 Transfer</span>
-          </div>
-
-          <div class="tl-item">
-            <div class="tl-dot d-ski"></div>
-            <div class="tl-date">Sun · 24 Jan 2027</div>
-            <div class="tl-title">Nozawa Onsen — Day 1</div>
-            <div class="tl-sub">Nozawa Onsen Ski Resort · 1,650m</div>
-            <span class="tl-badge badge-ski">🏂 Shred</span>
-          </div>
-
-          <div class="tl-item">
-            <div class="tl-dot d-ski"></div>
-            <div class="tl-date">Mon · 25 Jan 2027</div>
-            <div class="tl-title">Nozawa Onsen — Day 2</div>
-            <div class="tl-sub">Powder hunting + hot springs evening</div>
-            <span class="tl-badge badge-ski">🏂 Shred</span>
-          </div>
-
-          <div class="tl-item">
-            <div class="tl-dot d-ski"></div>
-            <div class="tl-date">Tue · 26 Jan 2027</div>
-            <div class="tl-title">Madarao Mountain — Day 1</div>
-            <div class="tl-sub">Madarao Kogen Ski Resort · 1,382m</div>
-            <span class="tl-badge badge-ski">🏂 Shred</span>
-          </div>
-
-          <div class="tl-item">
-            <div class="tl-dot d-ski"></div>
-            <div class="tl-date">Wed · 27 Jan 2027</div>
-            <div class="tl-title">Madarao Mountain — Day 2</div>
-            <div class="tl-sub">Deep Japow mission</div>
-            <span class="tl-badge badge-ski">🏂 Shred</span>
-          </div>
-
-          <div class="tl-item">
-            <div class="tl-dot d-ski"></div>
-            <div class="tl-date">Thu · 28 Jan 2027</div>
-            <div class="tl-title">Final Shred Day 🤙</div>
-            <div class="tl-sub">Last runs, last Japow, no regrets</div>
-            <span class="tl-badge badge-ski">🏂 Shred</span>
-          </div>
-
-          <div class="tl-item">
-            <div class="tl-dot d-purple"></div>
-            <div class="tl-date">Fri · 29 Jan 2027</div>
-            <div class="tl-title">Return to Tokyo</div>
-            <div class="tl-sub">Shinkansen back · last ramen 🍜</div>
-            <span class="tl-badge badge-travel">🚄 Transit</span>
-          </div>
-
-          <div class="tl-item">
-            <div class="tl-dot d-green"></div>
-            <div class="tl-date">Fri · 29 Jan 2027</div>
-            <div class="tl-title">Crew flies Tokyo → Singapore</div>
-            <div class="tl-sub">Depart NRT / HND · See you SG! 🇸🇬</div>
-            <span class="tl-badge badge-home">✈ Home</span>
-          </div>
-
+        <div style="margin-top:8px" class="timeline">
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-date">Thu · 21 Jan 2027</div><div class="tl-title">Crew flies Singapore → Tokyo</div><div class="tl-sub">Depart Singapore Changi (SIN)</div><span class="tl-badge badge-fly">✈ Flight</span></div>
+          <div class="tl-item"><div class="tl-dot d-purple"></div><div class="tl-date">Fri · 22 Jan 2027</div><div class="tl-title">Arrive Tokyo · Rest &amp; Explore</div><div class="tl-sub">Shinjuku / Shibuya vibes</div><span class="tl-badge badge-travel">🗼 Tokyo</span></div>
+          <div class="tl-item"><div class="tl-dot d-purple"></div><div class="tl-date">Sat · 23 Jan 2027</div><div class="tl-title">Transfer to Nozawa Onsen</div><div class="tl-sub">Shinkansen → Iiyama → Nozawa</div><span class="tl-badge badge-travel">🚄 Transfer</span></div>
+          <div class="tl-item"><div class="tl-dot d-ski"></div><div class="tl-date">Sun · 24 Jan 2027</div><div class="tl-title">Nozawa Onsen — Day 1</div><div class="tl-sub">Nozawa Onsen Ski Resort · 1,650m</div><span class="tl-badge badge-ski">🏂 Shred</span></div>
+          <div class="tl-item"><div class="tl-dot d-ski"></div><div class="tl-date">Mon · 25 Jan 2027</div><div class="tl-title">Nozawa Onsen — Day 2</div><div class="tl-sub">Powder hunting + hot springs evening</div><span class="tl-badge badge-ski">🏂 Shred</span></div>
+          <div class="tl-item"><div class="tl-dot d-ski"></div><div class="tl-date">Tue · 26 Jan 2027</div><div class="tl-title">Madarao Mountain — Day 1</div><div class="tl-sub">Madarao Kogen Ski Resort · 1,382m</div><span class="tl-badge badge-ski">🏂 Shred</span></div>
+          <div class="tl-item"><div class="tl-dot d-ski"></div><div class="tl-date">Wed · 27 Jan 2027</div><div class="tl-title">Madarao Mountain — Day 2</div><div class="tl-sub">Deep Japow mission</div><span class="tl-badge badge-ski">🏂 Shred</span></div>
+          <div class="tl-item"><div class="tl-dot d-ski"></div><div class="tl-date">Thu · 28 Jan 2027</div><div class="tl-title">Final Shred Day 🤙</div><div class="tl-sub">Last runs, last Japow, no regrets</div><span class="tl-badge badge-ski">🏂 Shred</span></div>
+          <div class="tl-item"><div class="tl-dot d-purple"></div><div class="tl-date">Fri · 29 Jan 2027</div><div class="tl-title">Return to Tokyo</div><div class="tl-sub">Shinkansen back · last ramen 🍜</div><span class="tl-badge badge-travel">🚄 Transit</span></div>
+          <div class="tl-item"><div class="tl-dot d-green"></div><div class="tl-date">Fri · 29 Jan 2027</div><div class="tl-title">Crew flies Tokyo → Singapore</div><div class="tl-sub">Depart NRT / HND · See you SG! 🇸🇬</div><span class="tl-badge badge-home">✈ Home</span></div>
         </div>
       </div>
     </div>
 
-    <!-- ━━━ WEATHER ━━━ -->
+    <!-- WEATHER -->
     <div class="slide">
-
       <div class="card">
-        <div class="resort-header">
-          <div>
-            <div class="resort-name rn-nozawa">Nozawa Onsen</div>
-            <div class="resort-country">Nagano Prefecture · Japan</div>
-          </div>
-          <span class="resort-elev elev-n">1,650m</span>
-        </div>
+        <div class="resort-header"><div><div class="resort-name rn-nozawa">Nozawa Onsen</div><div class="resort-country">Nagano Prefecture · Japan</div></div><span class="resort-elev elev-n">1,650m</span></div>
         <div class="btn-row">
           <a class="wx-btn b-weather" href="https://www.skiresort.info/ski-resort/nozawa-onsen/weather/" target="_blank">⛅ Weather</a>
           <a class="wx-btn b-snow" href="https://www.snow-forecast.com/resorts/Nozawa-Onsen/6day/mid" target="_blank">❄ Snow Forecast</a>
         </div>
       </div>
-
       <div class="card">
-        <div class="resort-header">
-          <div>
-            <div class="resort-name rn-madarao">Madarao</div>
-            <div class="resort-country">Nagano Prefecture · Japan</div>
-          </div>
-          <span class="resort-elev elev-m">1,382m</span>
-        </div>
+        <div class="resort-header"><div><div class="resort-name rn-madarao">Madarao</div><div class="resort-country">Nagano Prefecture · Japan</div></div><span class="resort-elev elev-m">1,382m</span></div>
         <div class="btn-row">
           <a class="wx-btn b-weather-m" href="https://www.skiresort.info/ski-resort/madarao-tangram/weather/" target="_blank">⛅ Weather</a>
           <a class="wx-btn b-snow-m" href="https://www.snow-forecast.com/resorts/Madarao/6day/mid" target="_blank">❄ Snow Forecast</a>
         </div>
       </div>
-
       <div class="card">
         <div class="card-label">🌡 Typical January Conditions</div>
         <div class="trip-stat"><span class="trip-stat-label">Nozawa Temp</span><span class="trip-stat-val">-6°C to -1°C</span></div>
@@ -628,120 +239,443 @@ body { display: flex; flex-direction: column; }
         <div class="trip-stat"><span class="trip-stat-label">Snow Type</span><span class="trip-stat-val">Japow Powder 🤙</span></div>
         <div class="trip-stat"><span class="trip-stat-label">Base Depth</span><span class="trip-stat-val">120 – 200cm avg</span></div>
       </div>
+    </div>
 
+    <!-- CHALLENGE -->
+    <div class="slide" style="padding:0;overflow:hidden;position:relative;display:flex;flex-direction:column">
+
+      <!-- Name entry overlay -->
+      <div id="overlay-name" style="display:none;position:absolute;inset:0;z-index:30;background:rgba(5,11,24,0.97);flex-direction:column;align-items:center;justify-content:center;padding:28px">
+        <div style="font-size:36px;margin-bottom:10px">⚡</div>
+        <div style="font-size:18px;font-weight:800;color:var(--cyan);text-shadow:0 0 16px rgba(0,229,255,0.5);letter-spacing:1px;margin-bottom:4px">Lightning Tap</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:24px;text-align:center;line-height:1.8">Tap CYAN — ignore RED<br>5 rounds · fastest avg wins</div>
+        <input id="name-input" type="text" maxlength="16" placeholder="Your rider name"
+          style="width:100%;max-width:280px;padding:13px 16px;background:rgba(0,229,255,0.06);border:1px solid rgba(0,229,255,0.3);border-radius:10px;color:var(--text);font-size:15px;font-weight:600;text-align:center;outline:none;margin-bottom:12px;letter-spacing:1px;-webkit-appearance:none">
+        <button onclick="confirmName()" style="width:100%;max-width:280px;padding:14px;background:linear-gradient(135deg,var(--blue),var(--cyan));border:none;border-radius:10px;color:#050b18;font-size:13px;font-weight:800;letter-spacing:2px;cursor:pointer;text-transform:uppercase">Lock In →</button>
+        <div style="font-size:10px;color:var(--muted);margin-top:16px;text-align:center;line-height:1.7">Name stored locally · only your best avg saved to leaderboard</div>
+      </div>
+
+      <!-- Leaderboard overlay -->
+      <div id="overlay-leaderboard" style="display:none;position:absolute;inset:0;z-index:30;background:rgba(5,11,24,0.97);flex-direction:column;padding:18px 16px 28px;overflow-y:auto">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-shrink:0">
+          <div>
+            <div style="font-size:16px;font-weight:800;color:var(--cyan);letter-spacing:1px">🏆 Global Leaderboard</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:2px;letter-spacing:1px">Fastest avg reaction · 5 rounds (ms)</div>
+          </div>
+          <button onclick="hideLeaderboard()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:var(--text);font-size:12px;font-weight:700;padding:7px 12px;border-radius:8px;cursor:pointer">✕</button>
+        </div>
+        <div id="lb-list"><div style="text-align:center;color:var(--muted);padding:30px 0;font-size:13px">Loading...</div></div>
+      </div>
+
+      <!-- Game UI -->
+      <div style="display:flex;flex-direction:column;height:100%">
+        <!-- Top bar -->
+        <div style="padding:12px 16px 6px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+          <div>
+            <div style="font-size:14px;font-weight:800;letter-spacing:2px;background:linear-gradient(90deg,var(--cyan),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-transform:uppercase">⚡ Lightning Tap</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:2px">Tap CYAN · ignore RED · 5 rounds</div>
+          </div>
+          <button onclick="showLeaderboard()" style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);color:var(--cyan);font-size:10px;font-weight:700;padding:7px 11px;border-radius:8px;cursor:pointer;letter-spacing:1px;flex-shrink:0">🏆 BOARD</button>
+        </div>
+        <!-- Round dots -->
+        <div style="display:flex;justify-content:center;gap:8px;padding:0 16px 8px;flex-shrink:0">
+          <div class="round-dot" id="rd0"></div>
+          <div class="round-dot" id="rd1"></div>
+          <div class="round-dot" id="rd2"></div>
+          <div class="round-dot" id="rd3"></div>
+          <div class="round-dot" id="rd4"></div>
+        </div>
+        <!-- Flash arena -->
+        <div id="flash-arena" style="flex:1;margin:0 14px 10px;border-radius:16px;border:1px solid var(--border);background:rgba(10,30,60,0.5);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;user-select:none;position:relative;overflow:hidden;transition:background .06s" onclick="arenaClick()">
+          <div id="state-idle" style="text-align:center;pointer-events:none">
+            <div style="font-size:44px;margin-bottom:12px">⚡</div>
+            <div id="idle-msg" style="font-size:16px;font-weight:700;color:var(--cyan);letter-spacing:1px">Tap to Start</div>
+            <div id="player-tag" style="font-size:11px;color:var(--muted);margin-top:6px"></div>
+          </div>
+          <div id="state-waiting" style="display:none;text-align:center;pointer-events:none">
+            <div style="font-size:20px;font-weight:800;color:var(--muted);letter-spacing:4px">WAIT...</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:8px">Get ready</div>
+          </div>
+          <div id="state-signal" style="display:none;text-align:center;pointer-events:none">
+            <div id="signal-icon" style="font-size:52px;line-height:1"></div>
+            <div id="signal-text" style="font-size:26px;font-weight:900;letter-spacing:4px;margin-top:8px"></div>
+            <div id="signal-sub" style="font-size:11px;margin-top:8px;letter-spacing:1px;font-weight:600"></div>
+          </div>
+          <div id="state-result" style="display:none;text-align:center;pointer-events:none">
+            <div id="result-ms" style="font-size:54px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1"></div>
+            <div id="result-unit" style="font-size:14px;color:var(--muted);margin-top:2px">ms</div>
+            <div id="result-label" style="font-size:12px;font-weight:700;letter-spacing:1px;margin-top:6px"></div>
+            <div id="result-next" style="font-size:11px;color:var(--muted);margin-top:8px"></div>
+          </div>
+          <div id="state-final" style="display:none;text-align:center;pointer-events:none">
+            <div style="font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Your Average</div>
+            <div id="final-avg" style="font-size:58px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1"></div>
+            <div style="font-size:13px;font-weight:600;margin-top:2px;color:var(--muted)">ms</div>
+            <div id="final-badge" style="font-size:13px;margin-top:10px;letter-spacing:1px"></div>
+            <div id="final-saved" style="font-size:10px;color:var(--muted);margin-top:8px"></div>
+            <div style="font-size:11px;color:rgba(0,229,255,0.6);margin-top:14px;letter-spacing:.5px">Tap to play again</div>
+          </div>
+        </div>
+        <!-- Score strip -->
+        <div id="score-strip" style="display:flex;justify-content:center;gap:6px;padding:0 14px 14px;flex-shrink:0"></div>
+      </div>
     </div>
 
   </div>
 </div>
 
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, limit, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+// ── PASTE YOUR FIREBASE CONFIG HERE ──
+const firebaseConfig = {
+  apiKey: "AIzaSyABX2VVbhbZh51MfVbM0S4yP7HDHLiUKqM",
+  authDomain: "nozawa-2027.firebaseapp.com",
+  projectId: "nozawa-2027",
+  storageBucket: "nozawa-2027.firebasestorage.app",
+  messagingSenderId: "216118634765",
+  appId: "1:216118634765:web:3667b456306003bf4ca844",
+  measurementId: "G-W1FEBV0231"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window._fbReady = true;
+
+window.fbSaveScore = async (playerName, avgMs) => {
+  try {
+    const ref = doc(db, 'leaderboard', playerName);
+    const snap = await getDoc(ref);
+    if (snap.exists() && snap.data().score <= avgMs) return false; // not better
+    await setDoc(ref, { name: playerName, score: avgMs, updatedAt: Date.now() });
+    return true;
+  } catch(e) { console.error('Firebase save error:', e); return false; }
+};
+
+window.fbGetLeaderboard = async () => {
+  try {
+    const q = query(collection(db, 'leaderboard'), orderBy('score', 'asc'), limit(20));
+    const snap = await getDocs(q);
+    return snap.docs.map(d => d.data());
+  } catch(e) { console.error('Firebase fetch error:', e); return []; }
+};
+</script>
+
 <script>
 // ── Tab navigation ──
 let curTab = 0;
 const slidesEl = document.getElementById('slides');
-
 function goTab(n) {
   curTab = n;
   slidesEl.style.transform = `translateX(-${n * 100}%)`;
-  document.querySelectorAll('.tab').forEach((t, i) => {
-    t.classList.toggle('active', i === n);
-  });
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', i===n));
+  if (n === 3) initChallenge();
 }
 
 // ── Touch swipe ──
 let startX = 0, isDragging = false;
 const vp = document.getElementById('viewport');
-
-vp.addEventListener('touchstart', e => {
-  startX = e.touches[0].clientX;
-  isDragging = true;
-  slidesEl.style.transition = 'none';
-}, { passive: true });
-
+vp.addEventListener('touchstart', e => { startX = e.touches[0].clientX; isDragging = true; slidesEl.style.transition = 'none'; }, {passive:true});
 vp.addEventListener('touchmove', e => {
   if (!isDragging) return;
   const dx = e.touches[0].clientX - startX;
-  const base = curTab * -100;
-  const pct = base + (dx / vp.offsetWidth * 100);
-  const clamped = Math.max(-200, Math.min(0, pct));
-  slidesEl.style.transform = `translateX(${clamped}%)`;
-}, { passive: true });
-
+  const pct = curTab * -100 + (dx / vp.offsetWidth * 100);
+  slidesEl.style.transform = `translateX(${Math.max(-300,Math.min(0,pct))}%)`;
+}, {passive:true});
 vp.addEventListener('touchend', e => {
   if (!isDragging) return;
   isDragging = false;
-  slidesEl.style.transition = 'transform 0.35s cubic-bezier(0.4,0,0.2,1)';
+  slidesEl.style.transition = 'transform .35s cubic-bezier(.4,0,.2,1)';
   const dx = e.changedTouches[0].clientX - startX;
-  const threshold = vp.offsetWidth * 0.22;
-  if (dx < -threshold && curTab < 2) goTab(curTab + 1);
-  else if (dx > threshold && curTab > 0) goTab(curTab - 1);
+  const th = vp.offsetWidth * 0.22;
+  if (dx < -th && curTab < 3) goTab(curTab+1);
+  else if (dx > th && curTab > 0) goTab(curTab-1);
   else goTab(curTab);
 });
 
 // ── Countdown ──
 function updateCountdown() {
-  const target = new Date('2027-01-23T00:00:00+09:00');
-  const now = new Date();
-  const diff = target - now;
-  if (diff <= 0) {
-    ['cd-days','cd-hrs','cd-min','cd-sec'].forEach(id => {
-      document.getElementById(id).textContent = '00';
-    });
-    return;
-  }
-  const days = Math.floor(diff / 86400000);
-  const hrs  = Math.floor((diff % 86400000) / 3600000);
-  const mins = Math.floor((diff % 3600000) / 60000);
-  const secs = Math.floor((diff % 60000) / 1000);
-  document.getElementById('cd-days').textContent = String(days).padStart(2, '0');
-  document.getElementById('cd-hrs').textContent  = String(hrs).padStart(2, '0');
-  document.getElementById('cd-min').textContent  = String(mins).padStart(2, '0');
-  document.getElementById('cd-sec').textContent  = String(secs).padStart(2, '0');
+  const diff = new Date('2027-01-23T00:00:00+09:00') - new Date();
+  if (diff <= 0) { ['cd-days','cd-hrs','cd-min','cd-sec'].forEach(id => document.getElementById(id).textContent='00'); return; }
+  document.getElementById('cd-days').textContent = String(Math.floor(diff/86400000)).padStart(2,'0');
+  document.getElementById('cd-hrs').textContent  = String(Math.floor((diff%86400000)/3600000)).padStart(2,'0');
+  document.getElementById('cd-min').textContent  = String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
+  document.getElementById('cd-sec').textContent  = String(Math.floor((diff%60000)/1000)).padStart(2,'0');
 }
-updateCountdown();
-setInterval(updateCountdown, 1000);
+updateCountdown(); setInterval(updateCountdown, 1000);
 
-// ── Floating snowflakes ──
+// ── Snowflakes ──
 function spawnSnowflake() {
-  const el = document.createElement('div');
-  el.className = 'snowflake';
-  el.textContent = ['*', '·', '❄', '+'][Math.floor(Math.random() * 4)];
-  el.style.left = Math.random() * 100 + 'vw';
-  el.style.fontSize = (8 + Math.random() * 10) + 'px';
-  const dur = 8 + Math.random() * 12;
-  el.style.animationDuration = dur + 's';
-  el.style.animationDelay = (Math.random() * 4) + 's';
-  el.style.opacity = 0.15 + Math.random() * 0.3;
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), (dur + 4) * 1000);
+  const el = document.createElement('div'); el.className = 'snowflake';
+  el.textContent = ['*','·','❄','+'][Math.floor(Math.random()*4)];
+  el.style.left = Math.random()*100+'vw'; el.style.fontSize=(8+Math.random()*10)+'px';
+  const dur = 8+Math.random()*12; el.style.animationDuration=dur+'s';
+  el.style.animationDelay=(Math.random()*4)+'s'; el.style.opacity=0.15+Math.random()*0.3;
+  document.body.appendChild(el); setTimeout(()=>el.remove(),(dur+4)*1000);
 }
-setInterval(spawnSnowflake, 1800);
-for (let i = 0; i < 5; i++) setTimeout(spawnSnowflake, i * 400);
+setInterval(spawnSnowflake,1800); for(let i=0;i<5;i++) setTimeout(spawnSnowflake,i*400);
 
+// ── Lightning Tap Game ──
+const ROUNDS = 5;
+const SIGNAL_DURATION = 1200; // ms window to tap
+let gameState = 'idle'; // idle | waiting | signal | result | final
+let currentRound = 0;
+let scores = [];
+let signalType = null; // 'cyan' | 'red'
+let signalStart = 0;
+let waitTimer = null;
+let signalTimer = null;
+let challengeInited = false;
 
+function initChallenge() {
+  if (challengeInited) return;
+  challengeInited = true;
+  const name = localStorage.getItem('rider_name');
+  if (!name) {
+    showOverlay('overlay-name');
+  } else {
+    document.getElementById('player-tag').textContent = 'Rider: ' + name;
+    document.getElementById('idle-msg').textContent = 'Tap to Start';
+  }
+}
+
+function confirmName() {
+  const val = document.getElementById('name-input').value.trim();
+  if (!val) { document.getElementById('name-input').style.borderColor='#ff4d4d'; return; }
+  localStorage.setItem('rider_name', val);
+  hideOverlay('overlay-name');
+  document.getElementById('player-tag').textContent = 'Rider: ' + val;
+}
+document.getElementById('name-input').addEventListener('keydown', e => { if(e.key==='Enter') confirmName(); });
+
+function showOverlay(id) { document.getElementById(id).style.display='flex'; }
+function hideOverlay(id) { document.getElementById(id).style.display='none'; }
+
+function showLeaderboard() {
+  showOverlay('overlay-leaderboard');
+  const list = document.getElementById('lb-list');
+  list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:30px 0;font-size:13px">Loading...</div>';
+  const me = localStorage.getItem('rider_name') || '';
+  const render = (rows) => {
+    if (!rows.length) { list.innerHTML='<div style="text-align:center;color:var(--muted);padding:30px 0;font-size:13px">No scores yet — be first! ⚡</div>'; return; }
+    list.innerHTML = rows.map((r,i) => {
+      const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':`<span style="color:var(--muted);font-size:11px">${i+1}</span>`;
+      const isMe = r.name === me;
+      return `<div class="lb-row${isMe?' me':''}">
+        <div style="width:26px;text-align:center;font-size:15px">${medal}</div>
+        <div style="flex:1;font-size:13px;font-weight:700;color:${isMe?'var(--cyan)':'var(--text)'}">${r.name}${isMe?' <span style="font-size:9px;color:var(--muted)">(you)</span>':''}</div>
+        <div style="font-size:15px;font-weight:800;color:${isMe?'var(--cyan)':'var(--text)'}">${r.score}<span style="font-size:10px;color:var(--muted);margin-left:2px">ms</span></div>
+      </div>`;
+    }).join('');
+  };
+  if (window.fbGetLeaderboard) {
+    window.fbGetLeaderboard().then(render).catch(()=>{ list.innerHTML='<div style="text-align:center;color:#ff4d4d;padding:30px 0;font-size:12px">Could not load.<br>Check Firebase config.</div>'; });
+  } else {
+    list.innerHTML='<div style="text-align:center;color:var(--muted);padding:30px 0;font-size:12px">Firebase not connected yet.<br>Add your config to the code.</div>';
+  }
+}
+function hideLeaderboard() { hideOverlay('overlay-leaderboard'); }
+
+function setState(s) {
+  ['idle','waiting','signal','result','final'].forEach(n => {
+    document.getElementById('state-'+n).style.display = n===s?'block':'none';
+  });
+  gameState = s;
+}
+
+function updateDots() {
+  for (let i=0;i<ROUNDS;i++) {
+    const d = document.getElementById('rd'+i);
+    if (i < currentRound) { d.className='round-dot done'; }
+    else if (i === currentRound) { d.className='round-dot active'; }
+    else { d.className='round-dot'; }
+  }
+}
+
+function updateScoreStrip() {
+  const strip = document.getElementById('score-strip');
+  strip.innerHTML = scores.map((s,i) => {
+    const cls = s===null?'':'  '+(s<200?'perfect':'good');
+    const label = s===null?'—':(s+'ms');
+    return `<div class="score-chip${cls}">${label}</div>`;
+  }).join('');
+}
+
+function arenaClick() {
+  if (!localStorage.getItem('rider_name')) { showOverlay('overlay-name'); return; }
+  if (gameState === 'idle' || gameState === 'final') { startGame(); return; }
+  if (gameState === 'waiting') { earlyTap(); return; }
+  if (gameState === 'signal') { recordTap(); return; }
+  if (gameState === 'result') { nextRound(); return; }
+}
+
+function startGame() {
+  currentRound = 0; scores = [];
+  updateDots(); updateScoreStrip();
+  setState('waiting');
+  setArenaColor('default');
+  scheduleSignal();
+}
+
+function scheduleSignal() {
+  updateDots();
+  const delay = 1200 + Math.random() * 2500;
+  waitTimer = setTimeout(() => {
+    signalType = Math.random() < 0.65 ? 'cyan' : 'red';
+    showSignal();
+  }, delay);
+}
+
+function showSignal() {
+  const arena = document.getElementById('flash-arena');
+  signalStart = performance.now();
+  if (signalType === 'cyan') {
+    arena.style.background = 'rgba(0,229,255,0.12)';
+    arena.style.border = '1px solid rgba(0,229,255,0.6)';
+    document.getElementById('signal-icon').textContent = '⚡';
+    document.getElementById('signal-text').style.color = '#00e5ff';
+    document.getElementById('signal-text').textContent = 'TAP!';
+    document.getElementById('signal-text').style.textShadow = '0 0 20px #00e5ff';
+    document.getElementById('signal-sub').style.color = 'rgba(0,229,255,0.7)';
+    document.getElementById('signal-sub').textContent = 'NOW!';
+  } else {
+    arena.style.background = 'rgba(239,68,68,0.10)';
+    arena.style.border = '1px solid rgba(239,68,68,0.5)';
+    document.getElementById('signal-icon').textContent = '🚫';
+    document.getElementById('signal-text').style.color = '#ef4444';
+    document.getElementById('signal-text').textContent = 'HOLD!';
+    document.getElementById('signal-text').style.textShadow = '0 0 20px #ef4444';
+    document.getElementById('signal-sub').style.color = 'rgba(239,68,68,0.7)';
+    document.getElementById('signal-sub').textContent = 'DO NOT TAP';
+  }
+  setState('signal');
+  signalTimer = setTimeout(() => {
+    if (gameState !== 'signal') return;
+    if (signalType === 'cyan') {
+      // missed — penalty
+      showResult(null, 'missed');
+    } else {
+      // correctly held
+      showResult(null, 'held');
+    }
+  }, SIGNAL_DURATION);
+}
+
+function earlyTap() {
+  clearTimeout(waitTimer);
+  showResult(null, 'early');
+}
+
+function recordTap() {
+  clearTimeout(signalTimer);
+  if (signalType === 'red') {
+    showResult(null, 'wrong');
+  } else {
+    const rt = Math.round(performance.now() - signalStart);
+    showResult(rt, 'hit');
+  }
+}
+
+function setArenaColor(type) {
+  const arena = document.getElementById('flash-arena');
+  if (type === 'default') { arena.style.background='rgba(10,30,60,0.5)'; arena.style.border='1px solid var(--border)'; }
+}
+
+function showResult(ms, type) {
+  setArenaColor('default');
+  setState('result');
+  const msEl = document.getElementById('result-ms');
+  const labelEl = document.getElementById('result-label');
+  const nextEl = document.getElementById('result-next');
+  if (type === 'hit') {
+    scores.push(ms);
+    msEl.style.background = ms < 200 ? 'linear-gradient(180deg,#fbbf24,#f59e0b)' : 'linear-gradient(180deg,#fff,var(--cyan))';
+    msEl.style.webkitBackgroundClip = 'text'; msEl.style.webkitTextFillColor = 'transparent';
+    msEl.textContent = ms;
+    document.getElementById('result-unit').style.display = 'block';
+    labelEl.style.color = ms < 200 ? '#fbbf24' : 'var(--cyan)';
+    labelEl.textContent = ms < 150 ? '⚡ LIGHTNING!' : ms < 250 ? '🎯 Sharp!' : ms < 400 ? '👍 Good' : '🐢 A bit slow…';
+  } else if (type === 'held') {
+    scores.push(0); // reward for correct hold — doesn't count against avg
+    msEl.style.background = 'linear-gradient(180deg,#4ade80,#22c55e)';
+    msEl.style.webkitBackgroundClip = 'text'; msEl.style.webkitTextFillColor = 'transparent';
+    msEl.textContent = '✓';
+    document.getElementById('result-unit').style.display = 'none';
+    labelEl.style.color = '#4ade80'; labelEl.textContent = 'Correctly held! 🧘';
+  } else if (type === 'wrong') {
+    scores.push(999);
+    msEl.style.background = 'linear-gradient(180deg,#ef4444,#b91c1c)';
+    msEl.style.webkitBackgroundClip = 'text'; msEl.style.webkitTextFillColor = 'transparent';
+    msEl.textContent = 'X';
+    document.getElementById('result-unit').style.display = 'none';
+    labelEl.style.color = '#ef4444'; labelEl.textContent = 'Tapped RED! +999ms penalty 💀';
+  } else if (type === 'early') {
+    scores.push(999);
+    msEl.style.background = 'linear-gradient(180deg,#f97316,#ea580c)';
+    msEl.style.webkitBackgroundClip = 'text'; msEl.style.webkitTextFillColor = 'transparent';
+    msEl.textContent = '!!';
+    document.getElementById('result-unit').style.display = 'none';
+    labelEl.style.color = '#f97316'; labelEl.textContent = 'Too early! +999ms penalty 😬';
+  } else if (type === 'missed') {
+    scores.push(999);
+    msEl.style.background = 'linear-gradient(180deg,var(--muted),#334155)';
+    msEl.style.webkitBackgroundClip = 'text'; msEl.style.webkitTextFillColor = 'transparent';
+    msEl.textContent = '—';
+    document.getElementById('result-unit').style.display = 'none';
+    labelEl.style.color = 'var(--muted)'; labelEl.textContent = 'Too slow — missed it!';
+  }
+  updateScoreStrip();
+  const remaining = ROUNDS - currentRound - 1;
+  nextEl.textContent = remaining > 0 ? `Tap for round ${currentRound+2} of ${ROUNDS}` : 'Tap to see final score';
+}
+
+function nextRound() {
+  currentRound++;
+  if (currentRound >= ROUNDS) { showFinal(); return; }
+  setState('waiting');
+  setArenaColor('default');
+  scheduleSignal();
+}
+
+function showFinal() {
+  const realScores = scores.filter(s => s !== 0 && s !== 999);
+  const penalty = scores.filter(s => s === 999).length;
+  let avg;
+  if (realScores.length === 0) {
+    avg = 999;
+  } else {
+    const base = Math.round(realScores.reduce((a,b)=>a+b,0)/realScores.length);
+    avg = Math.min(999, base + penalty * 150);
+  }
+  setState('final');
+  for (let i=0;i<ROUNDS;i++) document.getElementById('rd'+i).className='round-dot done';
+  const avgEl = document.getElementById('final-avg');
+  avgEl.style.background = avg < 200 ? 'linear-gradient(180deg,#fbbf24,var(--cyan))' : 'linear-gradient(180deg,#fff,var(--cyan))';
+  avgEl.style.webkitBackgroundClip='text'; avgEl.style.webkitTextFillColor='transparent';
+  avgEl.textContent = avg;
+  const badge = document.getElementById('final-badge');
+  badge.textContent = avg<150?'🏆 Legend — sub 150ms!':avg<200?'⚡ Elite Reflexes':avg<300?'🎯 Sharp Shooter':avg<450?'👍 Decent Rider':'🐢 Need More Japow Energy';
+  badge.style.color = avg<200?'#fbbf24':avg<300?'var(--cyan)':'var(--muted)';
+  const savedEl = document.getElementById('final-saved');
+  const playerName = localStorage.getItem('rider_name');
+  if (playerName && window.fbSaveScore) {
+    savedEl.textContent = 'Submitting to leaderboard...';
+    window.fbSaveScore(playerName, avg).then(saved => {
+      savedEl.textContent = saved ? '✅ New best saved to leaderboard!' : '(Not a new personal best)';
+    }).catch(()=>{ savedEl.textContent='⚠️ Could not save — check Firebase config'; });
+  } else {
+    savedEl.textContent = 'Connect Firebase to save scores globally';
+  }
+}
+
+// ── PWA Service Worker ──
 if ('serviceWorker' in navigator) {
-  const swCode = `
-    const CACHE = 'nozawa-2027-v1';
-    self.addEventListener('install', e => {
-      self.skipWaiting();
-    });
-    self.addEventListener('activate', e => {
-      e.waitUntil(caches.keys().then(keys =>
-        Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-      ));
-    });
-    self.addEventListener('fetch', e => {
-      e.respondWith(
-        caches.match(e.request).then(cached => cached || fetch(e.request).then(res => {
-          const clone = res.clone();
-          caches.open(CACHE).then(c => c.put(e.request, clone));
-          return res;
-        }).catch(() => cached))
-      );
-    });
-  `;
-  const blob = new Blob([swCode], { type: 'application/javascript' });
-  const swUrl = URL.createObjectURL(blob);
-  navigator.serviceWorker.register(swUrl).catch(() => {});
+  const sw = `const C='nozawa-2027-v2';self.addEventListener('install',e=>self.skipWaiting());self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(n=>n!==C).map(n=>caches.delete(n))))));self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));`;
+  const blob = new Blob([sw],{type:'application/javascript'});
+  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
 }
 </script>
 </body>
