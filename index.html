@@ -117,8 +117,8 @@ body{display:flex;flex-direction:column}
 .lb-row.me{background:rgba(0,229,255,0.08);border-color:rgba(0,229,255,0.25)}
 .crew-del-btn{position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:50%;background:#ef4444;border:2px solid var(--bg);color:#fff;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;line-height:1;box-shadow:0 0 8px rgba(239,68,68,0.6);transition:transform .15s}
 .crew-del-btn:active{transform:scale(0.85)}
-.delete-mode .crew-member{animation:delete-wiggle .3s ease-in-out infinite alternate}
-@keyframes delete-wiggle{0%{transform:rotate(-1deg)}100%{transform:rotate(1deg)}}
+.delete-mode .crew-member{animation:delete-wiggle .5s ease-in-out infinite alternate}
+@keyframes delete-wiggle{0%{transform:rotate(-0.4deg)}100%{transform:rotate(0.4deg)}}
 .crew-member.new-entry{animation:crew-pop .35s cubic-bezier(.34,1.56,.64,1)}
 @keyframes crew-pop{0%{opacity:0;transform:scale(0.6)}100%{opacity:1;transform:scale(1)}}
 .btn-del-crew.active{background:rgba(239,68,68,0.15)!important;border-color:rgba(239,68,68,0.6)!important;color:#ff6b6b!important}
@@ -544,10 +544,13 @@ function getInitials(name) {
 }
 
 function getNextTag() {
+  const available = [];
   for (let i = 0; i < CREW_TAGS.length; i++) {
-    if (!usedTagIndices.has(i)) return { tag: CREW_TAGS[i], idx: i };
+    if (!usedTagIndices.has(i)) available.push(i);
   }
-  return { tag: 'Japow Rider', idx: -1 };
+  if (available.length === 0) return { tag: 'Japow Rider', idx: -1 };
+  const pick = available[Math.floor(Math.random() * available.length)];
+  return { tag: CREW_TAGS[pick], idx: pick };
 }
 
 function getNextPaletteIdx() {
