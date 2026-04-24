@@ -115,6 +115,14 @@ body{display:flex;flex-direction:column}
 .score-chip.perfect{color:#fbbf24;border-color:rgba(251,191,36,0.4);background:rgba(251,191,36,0.06)}
 .lb-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;margin-bottom:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);transition:all .2s}
 .lb-row.me{background:rgba(0,229,255,0.08);border-color:rgba(0,229,255,0.25)}
+.tl-item{cursor:pointer;border-radius:8px;padding:4px 6px 4px 0;margin-left:-6px;transition:background .15s;position:relative}
+.tl-item:active{background:rgba(0,229,255,0.06)}
+.iti-delete-mode .tl-item{animation:delete-wiggle .5s ease-in-out infinite alternate}
+.tl-del-btn{position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;background:#ef4444;border:2px solid var(--bg);color:#fff;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;line-height:1;box-shadow:0 0 8px rgba(239,68,68,0.6);transition:transform .15s}
+.tl-del-btn:active{transform:scale(0.85)}
+.btn-del-iti.active{background:rgba(239,68,68,0.15)!important;border-color:rgba(239,68,68,0.6)!important;color:#ff6b6b!important}
+.iti-badge-opt{font-size:8px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:8px 4px;border-radius:7px;text-align:center;cursor:pointer;border:2px solid transparent;transition:all .15s;opacity:.5}
+.iti-badge-opt.selected{opacity:1;border-color:currentColor;transform:scale(1.05)}
 .crew-del-btn{position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:50%;background:#ef4444;border:2px solid var(--bg);color:#fff;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;line-height:1;box-shadow:0 0 8px rgba(239,68,68,0.6);transition:transform .15s}
 .crew-del-btn:active{transform:scale(0.85)}
 .delete-mode .crew-member{animation:delete-wiggle .5s ease-in-out infinite alternate}
@@ -122,6 +130,7 @@ body{display:flex;flex-direction:column}
 .crew-member.new-entry{animation:crew-pop .35s cubic-bezier(.34,1.56,.64,1)}
 @keyframes crew-pop{0%{opacity:0;transform:scale(0.6)}100%{opacity:1;transform:scale(1)}}
 .btn-del-crew.active{background:rgba(239,68,68,0.15)!important;border-color:rgba(239,68,68,0.6)!important;color:#ff6b6b!important}
+#btn-del-accom.active{background:rgba(239,68,68,0.15)!important;border-color:rgba(239,68,68,0.6)!important;color:#ff6b6b!important}
 </style>
 </head>
 <body>
@@ -184,17 +193,58 @@ body{display:flex;flex-direction:column}
         <div class="crew-grid" id="crew-grid"></div>
       </div>
       <div class="card">
-        <div class="card-label">🏠 Accommodation</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-          <div>
-            <div style="font-size:17px;font-weight:800;color:var(--cyan);text-shadow:0 0 14px rgba(0,229,255,0.4)">La Colina Retreat</div>
-            <div style="font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:3px;text-transform:uppercase">Nozawa Onsen · Japan</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div class="card-label" style="margin-bottom:0">🏠 Accommodation</div>
+          <div style="display:flex;gap:7px">
+            <button onclick="openAddAccom()" style="padding:6px 11px;border-radius:8px;border:1px solid rgba(0,229,255,0.35);background:rgba(0,229,255,0.07);color:var(--cyan);font-size:10px;font-weight:800;letter-spacing:1px;cursor:pointer;text-transform:uppercase">＋ Add</button>
+            <button id="btn-del-accom" onclick="toggleAccomDeleteMode()" style="padding:6px 11px;border-radius:8px;border:1px solid rgba(239,68,68,0.3);background:rgba(239,68,68,0.05);color:#f87171;font-size:10px;font-weight:800;letter-spacing:1px;cursor:pointer;text-transform:uppercase">✕ Delete</button>
           </div>
-          <div style="font-size:26px;opacity:.7">🏡</div>
         </div>
-        <div style="display:flex;gap:10px">
-          <a href="https://lacolinaretreat.jp/en/home/" target="_blank" style="flex:1;display:block;padding:11px 8px;border-radius:10px;border:1px solid rgba(0,229,255,0.35);color:var(--cyan);background:rgba(0,229,255,0.06);font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-align:center;text-decoration:none">🌐 Website</a>
-          <a href="https://maps.app.goo.gl/FwYyeXcBWYMXgaiQ9?g_st=iw" target="_blank" style="flex:1;display:block;padding:11px 8px;border-radius:10px;border:1px solid rgba(74,222,128,0.35);color:#4ade80;background:rgba(74,222,128,0.06);font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-align:center;text-decoration:none">📍 Maps</a>
+        <div id="accom-list"></div>
+      </div>
+
+      <!-- Add / Edit Accommodation Modal -->
+      <div id="overlay-accom" style="display:none;position:fixed;inset:0;z-index:50;background:rgba(5,11,24,0.97);flex-direction:column;align-items:center;justify-content:center;padding:24px;overflow-y:auto">
+        <div style="width:100%;max-width:340px">
+          <div id="accom-modal-title" style="font-size:15px;font-weight:800;color:var(--cyan);letter-spacing:1px;margin-bottom:18px;text-align:center">🏡 Add Accommodation</div>
+
+          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Property Name</div>
+          <input id="accom-name" type="text" maxlength="50" placeholder="e.g. La Colina Retreat"
+            style="width:100%;padding:11px 14px;background:rgba(5,11,24,0.95);border:1px solid rgba(0,229,255,0.25);border-radius:10px;color:var(--text);font-size:13px;outline:none;margin-bottom:14px;letter-spacing:.5px">
+
+          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Location</div>
+          <input id="accom-location" type="text" maxlength="60" placeholder="e.g. Nozawa Onsen · Japan"
+            style="width:100%;padding:11px 14px;background:rgba(5,11,24,0.95);border:1px solid rgba(0,229,255,0.25);border-radius:10px;color:var(--text);font-size:13px;outline:none;margin-bottom:14px;letter-spacing:.5px">
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+            <div>
+              <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Check-in</div>
+              <input id="accom-checkin" type="text" maxlength="20" placeholder="e.g. 23 Jan"
+                style="width:100%;padding:11px 14px;background:rgba(5,11,24,0.95);border:1px solid rgba(0,229,255,0.25);border-radius:10px;color:var(--text);font-size:13px;outline:none;letter-spacing:.5px">
+            </div>
+            <div>
+              <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Check-out</div>
+              <input id="accom-checkout" type="text" maxlength="20" placeholder="e.g. 29 Jan"
+                style="width:100%;padding:11px 14px;background:rgba(5,11,24,0.95);border:1px solid rgba(0,229,255,0.25);border-radius:10px;color:var(--text);font-size:13px;outline:none;letter-spacing:.5px">
+            </div>
+          </div>
+
+          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Website URL <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></div>
+          <input id="accom-url" type="url" maxlength="200" placeholder="https://…"
+            style="width:100%;padding:11px 14px;background:rgba(5,11,24,0.95);border:1px solid rgba(0,229,255,0.25);border-radius:10px;color:var(--text);font-size:13px;outline:none;margin-bottom:14px;letter-spacing:.5px">
+
+          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Google Maps URL <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></div>
+          <input id="accom-maps" type="url" maxlength="200" placeholder="https://maps.app.goo.gl/…"
+            style="width:100%;padding:11px 14px;background:rgba(5,11,24,0.95);border:1px solid rgba(0,229,255,0.25);border-radius:10px;color:var(--text);font-size:13px;outline:none;margin-bottom:14px;letter-spacing:.5px">
+
+          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Remarks <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></div>
+          <textarea id="accom-remarks" maxlength="200" placeholder="e.g. Breakfast included, check-in after 3pm…" rows="3"
+            style="width:100%;padding:11px 14px;background:rgba(5,11,24,0.95);border:1px solid rgba(0,229,255,0.25);border-radius:10px;color:var(--text);font-size:13px;outline:none;margin-bottom:18px;letter-spacing:.5px;resize:none;font-family:inherit;line-height:1.5"></textarea>
+
+          <div style="display:flex;gap:10px">
+            <button onclick="closeAccomModal()" style="flex:1;padding:13px;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer">Cancel</button>
+            <button id="accom-save-btn" onclick="saveAccom()" style="flex:2;padding:13px;background:linear-gradient(135deg,var(--blue),var(--cyan));border:none;border-radius:10px;color:#050b18;font-size:13px;font-weight:800;letter-spacing:1.5px;cursor:pointer;text-transform:uppercase">Save →</button>
+          </div>
         </div>
       </div>
       <!-- Add Crew Modal -->
@@ -213,18 +263,46 @@ body{display:flex;flex-direction:column}
     </div>
     <div class="slide">
       <div class="card">
-        <div class="card-label">📅 Full Schedule</div>
-        <div style="margin-top:8px" class="timeline">
-          <div class="tl-item"><div class="tl-dot"></div><div class="tl-date">Thu · 21 Jan 2027</div><div class="tl-title">Crew flies Singapore → Tokyo</div><div class="tl-sub">Depart Singapore Changi (SIN)</div><span class="tl-badge badge-fly">✈ Flight</span></div>
-          <div class="tl-item"><div class="tl-dot d-purple"></div><div class="tl-date">Fri · 22 Jan 2027</div><div class="tl-title">Arrive Tokyo · Rest &amp; Explore</div><div class="tl-sub">Shinjuku / Shibuya vibes</div><span class="tl-badge badge-travel">🗼 Tokyo</span></div>
-          <div class="tl-item"><div class="tl-dot d-purple"></div><div class="tl-date">Sat · 23 Jan 2027</div><div class="tl-title">Transfer to Nozawa Onsen</div><div class="tl-sub">Shinkansen → Iiyama → Nozawa</div><span class="tl-badge badge-travel">🚄 Transfer</span></div>
-          <div class="tl-item"><div class="tl-dot d-ski"></div><div class="tl-date">Sun · 24 Jan 2027</div><div class="tl-title">Nozawa Onsen — Day 1</div><div class="tl-sub">Nozawa Onsen Ski Resort · 1,650m</div><span class="tl-badge badge-ski">🏂 Shred</span></div>
-          <div class="tl-item"><div class="tl-dot d-ski"></div><div class="tl-date">Mon · 25 Jan 2027</div><div class="tl-title">Nozawa Onsen — Day 2</div><div class="tl-sub">Powder hunting + hot springs evening</div><span class="tl-badge badge-ski">🏂 Shred</span></div>
-          <div class="tl-item"><div class="tl-dot d-ski"></div><div class="tl-date">Tue · 26 Jan 2027</div><div class="tl-title">Madarao Mountain — Day 1</div><div class="tl-sub">Madarao Kogen Ski Resort · 1,382m</div><span class="tl-badge badge-ski">🏂 Shred</span></div>
-          <div class="tl-item"><div class="tl-dot d-ski"></div><div class="tl-date">Wed · 27 Jan 2027</div><div class="tl-title">Madarao Mountain — Day 2</div><div class="tl-sub">Deep Japow mission</div><span class="tl-badge badge-ski">🏂 Shred</span></div>
-          <div class="tl-item"><div class="tl-dot d-ski"></div><div class="tl-date">Thu · 28 Jan 2027</div><div class="tl-title">Final Shred Day 🤙</div><div class="tl-sub">Last runs, last Japow, no regrets</div><span class="tl-badge badge-ski">🏂 Shred</span></div>
-          <div class="tl-item"><div class="tl-dot d-purple"></div><div class="tl-date">Fri · 29 Jan 2027</div><div class="tl-title">Return to Tokyo</div><div class="tl-sub">Shinkansen back · last ramen 🍜</div><span class="tl-badge badge-travel">🚄 Transit</span></div>
-          <div class="tl-item"><div class="tl-dot d-green"></div><div class="tl-date">Fri · 29 Jan 2027</div><div class="tl-title">Crew flies Tokyo → Singapore</div><div class="tl-sub">Depart NRT / HND · See you SG! 🇸🇬</div><span class="tl-badge badge-home">✈ Home</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div class="card-label" style="margin-bottom:0">📅 Full Schedule</div>
+          <div style="display:flex;gap:7px">
+            <button onclick="openAddItinerary()" style="padding:6px 11px;border-radius:8px;border:1px solid rgba(0,229,255,0.35);background:rgba(0,229,255,0.07);color:var(--cyan);font-size:10px;font-weight:800;letter-spacing:1px;cursor:pointer;text-transform:uppercase">＋ Add</button>
+            <button id="btn-del-iti" onclick="toggleItiDeleteMode()" style="padding:6px 11px;border-radius:8px;border:1px solid rgba(239,68,68,0.3);background:rgba(239,68,68,0.05);color:#f87171;font-size:10px;font-weight:800;letter-spacing:1px;cursor:pointer;text-transform:uppercase">✕ Delete</button>
+          </div>
+        </div>
+        <div style="font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:10px" id="iti-hint">Tap any entry to edit</div>
+        <div style="margin-top:4px" class="timeline" id="itinerary-timeline"></div>
+      </div>
+
+      <!-- Edit / Add Itinerary Entry Modal -->
+      <div id="overlay-edit-itinerary" style="display:none;position:fixed;inset:0;z-index:50;background:rgba(5,11,24,0.97);flex-direction:column;align-items:center;justify-content:center;padding:24px;overflow-y:auto">
+        <div style="width:100%;max-width:340px">
+          <div id="iti-modal-title" style="font-size:15px;font-weight:800;color:var(--cyan);letter-spacing:1px;margin-bottom:18px;text-align:center">✏️ Edit Entry</div>
+
+          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Date Label</div>
+          <input id="iti-edit-date" type="text" maxlength="40"
+            style="width:100%;padding:11px 14px;background:rgba(5,11,24,0.95);border:1px solid rgba(0,229,255,0.25);border-radius:10px;color:var(--text);font-size:13px;outline:none;margin-bottom:14px;letter-spacing:.5px">
+
+          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Title</div>
+          <input id="iti-edit-title" type="text" maxlength="60"
+            style="width:100%;padding:11px 14px;background:rgba(5,11,24,0.95);border:1px solid rgba(0,229,255,0.25);border-radius:10px;color:var(--text);font-size:13px;outline:none;margin-bottom:14px;letter-spacing:.5px">
+
+          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Subtitle</div>
+          <input id="iti-edit-sub" type="text" maxlength="80"
+            style="width:100%;padding:11px 14px;background:rgba(5,11,24,0.95);border:1px solid rgba(0,229,255,0.25);border-radius:10px;color:var(--text);font-size:13px;outline:none;margin-bottom:14px;letter-spacing:.5px">
+
+          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Badge Type</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px" id="iti-badge-picker">
+            <div class="iti-badge-opt badge-fly" data-badge="fly" onclick="selectItiBadge('fly')">✈ Flight</div>
+            <div class="iti-badge-opt badge-travel" data-badge="travel" onclick="selectItiBadge('travel')">🚄 Travel</div>
+            <div class="iti-badge-opt badge-ski" data-badge="ski" onclick="selectItiBadge('ski')">🏂 Shred</div>
+            <div class="iti-badge-opt badge-home" data-badge="home" onclick="selectItiBadge('home')">✈ Home</div>
+          </div>
+
+          <div style="display:flex;gap:10px">
+            <button onclick="closeEditItinerary()" style="flex:1;padding:13px;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer">Cancel</button>
+            <button id="iti-save-btn" onclick="saveEditItinerary()" style="flex:2;padding:13px;background:linear-gradient(135deg,var(--blue),var(--cyan));border:none;border-radius:10px;color:#050b18;font-size:13px;font-weight:800;letter-spacing:1.5px;cursor:pointer;text-transform:uppercase">Save →</button>
+          </div>
         </div>
       </div>
     </div>
@@ -404,6 +482,50 @@ window.fbWatchCrew = (callback) => {
   return onSnapshot(doc(db, 'crew', 'roster'), (snap) => {
     if (snap.exists()) callback(snap.data().members || []);
   }, (err) => console.error('Crew watch error:', err));
+};
+
+// ── Itinerary Firestore functions ──
+window.fbSaveItinerary = async (entries) => {
+  try {
+    await setDoc(doc(db, 'itinerary', 'schedule'), { entries, updatedAt: Date.now() });
+    return true;
+  } catch(e) { console.error('Itinerary save error:', e); return false; }
+};
+
+window.fbGetItinerary = async () => {
+  try {
+    const snap = await getDoc(doc(db, 'itinerary', 'schedule'));
+    if (snap.exists()) return snap.data().entries || [];
+    return null;
+  } catch(e) { console.error('Itinerary fetch error:', e); return null; }
+};
+
+window.fbWatchItinerary = (callback) => {
+  return onSnapshot(doc(db, 'itinerary', 'schedule'), (snap) => {
+    if (snap.exists()) callback(snap.data().entries || []);
+  }, (err) => console.error('Itinerary watch error:', err));
+};
+
+// ── Accommodation Firestore functions ──
+window.fbSaveAccom = async (entries) => {
+  try {
+    await setDoc(doc(db, 'accommodation', 'list'), { entries, updatedAt: Date.now() });
+    return true;
+  } catch(e) { console.error('Accom save error:', e); return false; }
+};
+
+window.fbGetAccom = async () => {
+  try {
+    const snap = await getDoc(doc(db, 'accommodation', 'list'));
+    if (snap.exists()) return snap.data().entries || [];
+    return null;
+  } catch(e) { console.error('Accom fetch error:', e); return null; }
+};
+
+window.fbWatchAccom = (callback) => {
+  return onSnapshot(doc(db, 'accommodation', 'list'), (snap) => {
+    if (snap.exists()) callback(snap.data().entries || []);
+  }, (err) => console.error('Accom watch error:', err));
 };
 </script>
 
@@ -691,6 +813,344 @@ try {
 } catch(e) {}
 loadCrewData(); // async — fetches from Firestore and starts live listener
 setupAddCrewInput();
+
+// ── Itinerary Management ──
+const DEFAULT_ITINERARY = [
+  {date:'Thu · 21 Jan 2027', title:'Crew flies Singapore → Tokyo', sub:'Depart Singapore Changi (SIN)', badge:'fly', dot:''},
+  {date:'Fri · 22 Jan 2027', title:'Arrive Tokyo · Rest & Explore', sub:'Shinjuku / Shibuya vibes', badge:'travel', dot:'d-purple'},
+  {date:'Sat · 23 Jan 2027', title:'Transfer to Nozawa Onsen', sub:'Shinkansen → Iiyama → Nozawa', badge:'travel', dot:'d-purple'},
+  {date:'Sun · 24 Jan 2027', title:'Nozawa Onsen — Day 1', sub:'Nozawa Onsen Ski Resort · 1,650m', badge:'ski', dot:'d-ski'},
+  {date:'Mon · 25 Jan 2027', title:'Nozawa Onsen — Day 2', sub:'Powder hunting + hot springs evening', badge:'ski', dot:'d-ski'},
+  {date:'Tue · 26 Jan 2027', title:'Madarao Mountain — Day 1', sub:'Madarao Kogen Ski Resort · 1,382m', badge:'ski', dot:'d-ski'},
+  {date:'Wed · 27 Jan 2027', title:'Madarao Mountain — Day 2', sub:'Deep Japow mission', badge:'ski', dot:'d-ski'},
+  {date:'Thu · 28 Jan 2027', title:'Final Shred Day 🤙', sub:'Last runs, last Japow, no regrets', badge:'ski', dot:'d-ski'},
+  {date:'Fri · 29 Jan 2027', title:'Return to Tokyo', sub:'Shinkansen back · last ramen 🍜', badge:'travel', dot:'d-purple'},
+  {date:'Fri · 29 Jan 2027', title:'Crew flies Tokyo → Singapore', sub:'Depart NRT / HND · See you SG! 🇸🇬', badge:'home', dot:'d-green'},
+];
+
+const BADGE_META = {
+  fly:    { cls:'badge-fly',    label:'✈ Flight'  },
+  travel: { cls:'badge-travel', label:'🚄 Travel'  },
+  ski:    { cls:'badge-ski',    label:'🏂 Shred'   },
+  home:   { cls:'badge-home',   label:'✈ Home'    },
+};
+const DOT_FOR_BADGE = { fly:'', travel:'d-purple', ski:'d-ski', home:'d-green' };
+
+let itineraryData = [];
+let editingItiIdx = -1;  // -1 = adding new
+let selectedItiBadge = 'fly';
+let itiDeleteMode = false;
+
+function renderItinerary() {
+  const tl = document.getElementById('itinerary-timeline');
+  if (!tl) return;
+  const hint = document.getElementById('iti-hint');
+  if (hint) hint.textContent = itiDeleteMode ? 'Tap ✕ on any entry to remove it' : 'Tap any entry to edit';
+
+  tl.innerHTML = itineraryData.map((entry, i) => {
+    const bm = BADGE_META[entry.badge] || BADGE_META.fly;
+    return `<div class="tl-item${itiDeleteMode ? '' : ''}" onclick="${itiDeleteMode ? '' : 'openEditItinerary(' + i + ')'}">
+      <div class="tl-dot ${entry.dot || ''}"></div>
+      <div class="tl-date">${entry.date}</div>
+      <div class="tl-title">${entry.title}</div>
+      <div class="tl-sub">${entry.sub}</div>
+      <span class="tl-badge ${bm.cls}">${bm.label}</span>
+      ${itiDeleteMode ? `<div class="tl-del-btn" onclick="event.stopPropagation();deleteItiEntry(${i})">✕</div>` : ''}
+    </div>`;
+  }).join('');
+
+  if (itiDeleteMode) tl.classList.add('iti-delete-mode');
+  else tl.classList.remove('iti-delete-mode');
+}
+
+function openAddItinerary() {
+  if (itiDeleteMode) toggleItiDeleteMode();
+  editingItiIdx = -1;
+  document.getElementById('iti-modal-title').textContent = '＋ New Entry';
+  document.getElementById('iti-edit-date').value  = '';
+  document.getElementById('iti-edit-title').value = '';
+  document.getElementById('iti-edit-sub').value   = '';
+  selectedItiBadge = 'ski';
+  document.querySelectorAll('.iti-badge-opt').forEach(el => {
+    el.classList.toggle('selected', el.dataset.badge === 'ski');
+  });
+  document.getElementById('iti-save-btn').textContent = 'Add →';
+  document.getElementById('overlay-edit-itinerary').style.display = 'flex';
+  setTimeout(() => document.getElementById('iti-edit-date').focus(), 100);
+}
+
+function openEditItinerary(idx) {
+  if (itiDeleteMode) return;
+  editingItiIdx = idx;
+  const e = itineraryData[idx];
+  document.getElementById('iti-modal-title').textContent = '✏️ Edit Entry';
+  document.getElementById('iti-edit-date').value  = e.date;
+  document.getElementById('iti-edit-title').value = e.title;
+  document.getElementById('iti-edit-sub').value   = e.sub;
+  selectedItiBadge = e.badge || 'fly';
+  document.querySelectorAll('.iti-badge-opt').forEach(el => {
+    el.classList.toggle('selected', el.dataset.badge === selectedItiBadge);
+  });
+  document.getElementById('iti-save-btn').textContent = 'Save →';
+  document.getElementById('overlay-edit-itinerary').style.display = 'flex';
+}
+
+function toggleItiDeleteMode() {
+  itiDeleteMode = !itiDeleteMode;
+  const btn = document.getElementById('btn-del-iti');
+  if (btn) btn.classList.toggle('active', itiDeleteMode);
+  renderItinerary();
+}
+
+async function deleteItiEntry(idx) {
+  itineraryData.splice(idx, 1);
+  if (itineraryData.length === 0) { itiDeleteMode = false; const b = document.getElementById('btn-del-iti'); if(b) b.classList.remove('active'); }
+  renderItinerary();
+  await saveItineraryData();
+}
+
+function closeEditItinerary() {
+  document.getElementById('overlay-edit-itinerary').style.display = 'none';
+}
+
+function selectItiBadge(badge) {
+  selectedItiBadge = badge;
+  document.querySelectorAll('.iti-badge-opt').forEach(el => {
+    el.classList.toggle('selected', el.dataset.badge === badge);
+  });
+}
+
+async function saveEditItinerary() {
+  const date  = document.getElementById('iti-edit-date').value.trim();
+  const title = document.getElementById('iti-edit-title').value.trim();
+  const sub   = document.getElementById('iti-edit-sub').value.trim();
+  if (!title) { document.getElementById('iti-edit-title').style.borderColor = '#ef4444'; return; }
+
+  const newEntry = {
+    date:  date || '—',
+    title,
+    sub,
+    badge: selectedItiBadge,
+    dot:   DOT_FOR_BADGE[selectedItiBadge]
+  };
+
+  if (editingItiIdx === -1) {
+    itineraryData.push(newEntry);
+  } else {
+    itineraryData[editingItiIdx] = newEntry;
+  }
+
+  closeEditItinerary();
+  renderItinerary();
+  await saveItineraryData();
+}
+
+async function saveItineraryData() {
+  try { localStorage.setItem('nozawa_itinerary_cache', JSON.stringify(itineraryData)); } catch(e) {}
+  if (window.fbSaveItinerary) await window.fbSaveItinerary(itineraryData);
+}
+
+async function loadItineraryData() {
+  // Show cached instantly
+  try {
+    const cached = localStorage.getItem('nozawa_itinerary_cache');
+    if (cached) { itineraryData = JSON.parse(cached); renderItinerary(); }
+  } catch(e) {}
+
+  let attempts = 0;
+  while (!window.fbGetItinerary && attempts < 30) {
+    await new Promise(r => setTimeout(r, 200));
+    attempts++;
+  }
+  if (!window.fbGetItinerary) {
+    if (!itineraryData.length) { itineraryData = [...DEFAULT_ITINERARY]; renderItinerary(); }
+    return;
+  }
+  try {
+    const data = await window.fbGetItinerary();
+    if (data === null) {
+      itineraryData = [...DEFAULT_ITINERARY];
+      await window.fbSaveItinerary(itineraryData);
+    } else {
+      itineraryData = data;
+    }
+  } catch(e) {
+    if (!itineraryData.length) itineraryData = [...DEFAULT_ITINERARY];
+  }
+  renderItinerary();
+  if (window.fbWatchItinerary) {
+    window.fbWatchItinerary(data => { itineraryData = data; renderItinerary(); });
+  }
+}
+
+loadItineraryData();
+
+// ── Accommodation Management ──
+const DEFAULT_ACCOM = [
+  {
+    name: 'La Colina Retreat',
+    location: 'Nozawa Onsen · Japan',
+    checkin: '23 Jan',
+    checkout: '29 Jan',
+    url: 'https://lacolinaretreat.jp/en/home/',
+    maps: 'https://maps.app.goo.gl/FwYyeXcBWYMXgaiQ9?g_st=iw',
+    remarks: ''
+  }
+];
+
+let accomData = [];
+let editingAccomIdx = -1;
+let accomDeleteMode = false;
+
+function renderAccom() {
+  const list = document.getElementById('accom-list');
+  if (!list) return;
+
+  if (!accomData.length) {
+    list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:14px 0;font-size:12px">No accommodation added yet</div>';
+    return;
+  }
+
+  list.innerHTML = accomData.map((a, i) => {
+    const hasDates = a.checkin || a.checkout;
+    const dateStr = hasDates ? `${a.checkin || '?'}  →  ${a.checkout || '?'}` : '';
+    return `
+    <div style="position:relative;margin-bottom:${i < accomData.length - 1 ? '16px' : '0'}">
+      ${accomDeleteMode ? `<div class="crew-del-btn" onclick="deleteAccom(${i})" style="top:-8px;right:-8px">✕</div>` : ''}
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:${hasDates || a.remarks ? '10px' : '12px'};cursor:pointer" onclick="${accomDeleteMode ? '' : 'openEditAccom(' + i + ')'}">
+        <div style="flex:1">
+          <div style="font-size:17px;font-weight:800;color:var(--cyan);text-shadow:0 0 14px rgba(0,229,255,0.4);line-height:1.2">${a.name}</div>
+          <div style="font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:3px;text-transform:uppercase">${a.location}</div>
+          ${hasDates ? `<div style="font-size:11px;color:var(--violet);margin-top:6px;font-weight:600;letter-spacing:.5px">📅 ${dateStr}</div>` : ''}
+          ${a.remarks ? `<div style="font-size:11px;color:var(--muted);margin-top:5px;line-height:1.5;font-style:italic">${a.remarks}</div>` : ''}
+        </div>
+        <div style="font-size:26px;opacity:.7;flex-shrink:0;margin-left:10px">🏡</div>
+      </div>
+      <div style="display:flex;gap:10px">
+        ${a.url ? `<a href="${a.url}" target="_blank" style="flex:1;display:block;padding:11px 8px;border-radius:10px;border:1px solid rgba(0,229,255,0.35);color:var(--cyan);background:rgba(0,229,255,0.06);font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-align:center;text-decoration:none">🌐 Website</a>` : ''}
+        ${a.maps ? `<a href="${a.maps}" target="_blank" style="flex:1;display:block;padding:11px 8px;border-radius:10px;border:1px solid rgba(74,222,128,0.35);color:#4ade80;background:rgba(74,222,128,0.06);font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-align:center;text-decoration:none">📍 Maps</a>` : ''}
+      </div>
+      ${i < accomData.length - 1 ? '<div style="height:1px;background:var(--border);margin-top:16px"></div>' : ''}
+    </div>`;
+  }).join('');
+
+  const delBtn = document.getElementById('btn-del-accom');
+  if (delBtn) delBtn.classList.toggle('active', accomDeleteMode);
+
+  // wiggle
+  if (accomDeleteMode) list.classList.add('delete-mode');
+  else list.classList.remove('delete-mode');
+}
+
+function openAddAccom() {
+  if (accomDeleteMode) toggleAccomDeleteMode();
+  editingAccomIdx = -1;
+  document.getElementById('accom-modal-title').textContent = '🏡 Add Accommodation';
+  document.getElementById('accom-name').value     = '';
+  document.getElementById('accom-location').value = '';
+  document.getElementById('accom-checkin').value  = '';
+  document.getElementById('accom-checkout').value = '';
+  document.getElementById('accom-url').value      = '';
+  document.getElementById('accom-maps').value     = '';
+  document.getElementById('accom-remarks').value  = '';
+  document.getElementById('accom-save-btn').textContent = 'Add →';
+  document.getElementById('overlay-accom').style.display = 'flex';
+  setTimeout(() => document.getElementById('accom-name').focus(), 100);
+}
+
+function openEditAccom(idx) {
+  if (accomDeleteMode) return;
+  editingAccomIdx = idx;
+  const a = accomData[idx];
+  document.getElementById('accom-modal-title').textContent = '✏️ Edit Accommodation';
+  document.getElementById('accom-name').value     = a.name     || '';
+  document.getElementById('accom-location').value = a.location || '';
+  document.getElementById('accom-checkin').value  = a.checkin  || '';
+  document.getElementById('accom-checkout').value = a.checkout || '';
+  document.getElementById('accom-url').value      = a.url      || '';
+  document.getElementById('accom-maps').value     = a.maps     || '';
+  document.getElementById('accom-remarks').value  = a.remarks  || '';
+  document.getElementById('accom-save-btn').textContent = 'Save →';
+  document.getElementById('overlay-accom').style.display = 'flex';
+}
+
+function closeAccomModal() {
+  document.getElementById('overlay-accom').style.display = 'none';
+}
+
+async function saveAccom() {
+  const name = document.getElementById('accom-name').value.trim();
+  if (!name) { document.getElementById('accom-name').style.borderColor = '#ef4444'; return; }
+  document.getElementById('accom-name').style.borderColor = '';
+
+  const entry = {
+    name,
+    location: document.getElementById('accom-location').value.trim(),
+    checkin:  document.getElementById('accom-checkin').value.trim(),
+    checkout: document.getElementById('accom-checkout').value.trim(),
+    url:      document.getElementById('accom-url').value.trim(),
+    maps:     document.getElementById('accom-maps').value.trim(),
+    remarks:  document.getElementById('accom-remarks').value.trim(),
+  };
+
+  if (editingAccomIdx === -1) accomData.push(entry);
+  else accomData[editingAccomIdx] = entry;
+
+  closeAccomModal();
+  renderAccom();
+  await saveAccomData();
+}
+
+function toggleAccomDeleteMode() {
+  accomDeleteMode = !accomDeleteMode;
+  renderAccom();
+}
+
+async function deleteAccom(idx) {
+  accomData.splice(idx, 1);
+  if (!accomData.length) accomDeleteMode = false;
+  renderAccom();
+  await saveAccomData();
+}
+
+async function saveAccomData() {
+  try { localStorage.setItem('nozawa_accom_cache', JSON.stringify(accomData)); } catch(e) {}
+  if (window.fbSaveAccom) await window.fbSaveAccom(accomData);
+}
+
+async function loadAccomData() {
+  try {
+    const cached = localStorage.getItem('nozawa_accom_cache');
+    if (cached) { accomData = JSON.parse(cached); renderAccom(); }
+  } catch(e) {}
+
+  let attempts = 0;
+  while (!window.fbGetAccom && attempts < 30) {
+    await new Promise(r => setTimeout(r, 200));
+    attempts++;
+  }
+  if (!window.fbGetAccom) {
+    if (!accomData.length) { accomData = [...DEFAULT_ACCOM]; renderAccom(); }
+    return;
+  }
+  try {
+    const data = await window.fbGetAccom();
+    if (data === null) {
+      accomData = [...DEFAULT_ACCOM];
+      await window.fbSaveAccom(accomData);
+    } else {
+      accomData = data;
+    }
+  } catch(e) {
+    if (!accomData.length) accomData = [...DEFAULT_ACCOM];
+  }
+  renderAccom();
+  if (window.fbWatchAccom) {
+    window.fbWatchAccom(data => { accomData = data; renderAccom(); });
+  }
+}
+
+loadAccomData();
 
 // ── Countdown ──
 function updateCountdown() {
